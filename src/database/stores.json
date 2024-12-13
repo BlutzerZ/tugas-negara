@@ -1,0 +1,21 @@
+{
+    "stores": [
+      {
+        "id": 1,
+        "name": "Parfum King",
+        "address": "Jl. Merdeka No.10, Jakarta",
+        "stock_30ml": 50,
+        "stock_roll_on": 30,
+        "stock_20ml": 20
+      },
+      {
+        "id": 2,
+        "name": "Perfume Palace",
+        "address": "Jl. Sudirman No.25, Bandung",
+        "stock_30ml": 70,
+        "stock_roll_on": 40,
+        "stock_20ml": 35
+      }
+    ]
+  }
+  

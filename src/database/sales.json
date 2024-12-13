@@ -1,0 +1,77 @@
+{
+    "sales": [
+      {
+        "id": 1,
+        "name": "Ahmad Rizki",
+        "region": "Jakarta Selatan",
+        "total_stores": 8,
+        "stores": [
+          "Parfum King - Kemang",
+          "Scent Haven - Cipete",
+          "Luxury Fragrance - Senopati",
+          "Perfume Palace - SCBD",
+          "Aroma Essence - Kebayoran",
+          "Signature Scents - Panglima Polim",
+          "Fragrance World - Dharmawangsa",
+          "Perfume Corner - Fatmawati"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Sarah Putri",
+        "region": "Jakarta Pusat",
+        "total_stores": 6,
+        "stores": [
+          "Perfume Boutique - Menteng",
+          "Essence Market - Tanah Abang",
+          "Aroma Paradise - Sudirman",
+          "Scented Treasures - Thamrin",
+          "Luxury Scents - Kuningan",
+          "Fragrance Kingdom - Setiabudi"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Budi Santoso",
+        "region": "Bandung",
+        "total_stores": 7,
+        "stores": [
+          "Perfume Lab - Dago",
+          "Aroma Bliss - Riau",
+          "Scent Lab - Pasirkaliki",
+          "Fragrance Emporium - Setiabudi",
+          "Perfume Works - Cihampelas",
+          "Scented Paradise - Cipaganti",
+          "Essence Hub - Sukajadi"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Linda Wijaya",
+        "region": "Surabaya",
+        "total_stores": 5,
+        "stores": [
+          "Perfume Gallery - Tunjungan",
+          "Scent Studio - Gubeng",
+          "Fragrance House - Darmo",
+          "Aroma Collection - Manyar",
+          "Essence Villa - Klampis"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Denny Pratama",
+        "region": "Bali",
+        "total_stores": 6,
+        "stores": [
+          "Perfume Oasis - Kuta",
+          "Scent Paradise - Seminyak",
+          "Fragrance Bay - Nusa Dua",
+          "Aroma Beach - Jimbaran",
+          "Essence Island - Sanur",
+          "Perfume Tropical - Ubud"
+        ]
+      }
+    ]
+  }
+  
