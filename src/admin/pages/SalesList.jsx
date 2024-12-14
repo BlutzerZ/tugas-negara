@@ -79,9 +79,6 @@ const SalesList = () => {
                                             Nama Sales
                                         </th>
                                         <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                            Area
-                                        </th>
-                                        <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                             Jumlah Toko
                                         </th>
                                         <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
@@ -98,12 +95,10 @@ const SalesList = () => {
                                         return (
                                             <tr key={salesPerson.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                                                 <td className="p-4">
+													
                                                     <div className="font-semibold text-gray-900 dark:text-white">
                                                         {salesPerson.name}
                                                     </div>
-                                                </td>
-                                                <td className="p-4 text-gray-700 dark:text-gray-300">
-                                                    {salesPerson.area}
                                                 </td>
                                                 <td className="p-4 text-gray-700 dark:text-gray-300">
                                                     {salesPerson.stores.length} Toko
