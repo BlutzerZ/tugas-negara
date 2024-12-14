@@ -17,40 +17,16 @@ const Dashboard = () => {
 						</div>
 						<div>
 							<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-								Jumlah Sales
-							</p>
-							<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-								99
-							</h2>
-						</div>
-					</div>
-				</div>
-
-				{/* Card 2: Jumlah Toko */}
-				<div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
-					<div className="flex items-center space-x-4">
-						<div className="p-3 bg-gray-100 rounded-full dark:bg-gray-700">
-							<svg
-								className="w-6 h-6 text-gray-600 dark:text-gray-300"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 1v10h10V5H5z"></path>
-							</svg>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-gray-600 dark:text-gray-400">
 								Jumlah Toko
 							</p>
 							<h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-								50
+								299
 							</h2>
 						</div>
 					</div>
 				</div>
 
-				{/* Card 3 */}
+				{/* Card 2 */}
 				<div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
 					<div className="flex items-center space-x-4">
 						<div className="p-3 bg-gray-100 rounded-full dark:bg-gray-700">
