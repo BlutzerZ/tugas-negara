@@ -7,6 +7,7 @@ import AddStore from './sales/pages/AddStore';
 import Login from './akun/pages/Login';
 import Register from './akun/pages/Register';
 import UserProfile from './akun/pages/UserProfile';
+import SalesStores from './admin/pages/SalesStores';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="stores/add" element={<AddStore />} />
           <Route path="sales" element={<SalesList />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="sales/:id" element={<SalesStores />} />
         </Route>
       </Routes>
     </Router>

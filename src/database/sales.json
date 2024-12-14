@@ -1,77 +1,129 @@
 {
-    "sales": [
-      {
-        "id": 1,
-        "name": "Ahmad Rizki",
-        "region": "Jakarta Selatan",
-        "total_stores": 8,
-        "stores": [
-          "Parfum King - Kemang",
-          "Scent Haven - Cipete",
-          "Luxury Fragrance - Senopati",
-          "Perfume Palace - SCBD",
-          "Aroma Essence - Kebayoran",
-          "Signature Scents - Panglima Polim",
-          "Fragrance World - Dharmawangsa",
-          "Perfume Corner - Fatmawati"
-        ]
-      },
-      {
-        "id": 2,
-        "name": "Sarah Putri",
-        "region": "Jakarta Pusat",
-        "total_stores": 6,
-        "stores": [
-          "Perfume Boutique - Menteng",
-          "Essence Market - Tanah Abang",
-          "Aroma Paradise - Sudirman",
-          "Scented Treasures - Thamrin",
-          "Luxury Scents - Kuningan",
-          "Fragrance Kingdom - Setiabudi"
-        ]
-      },
-      {
-        "id": 3,
-        "name": "Budi Santoso",
-        "region": "Bandung",
-        "total_stores": 7,
-        "stores": [
-          "Perfume Lab - Dago",
-          "Aroma Bliss - Riau",
-          "Scent Lab - Pasirkaliki",
-          "Fragrance Emporium - Setiabudi",
-          "Perfume Works - Cihampelas",
-          "Scented Paradise - Cipaganti",
-          "Essence Hub - Sukajadi"
-        ]
-      },
-      {
-        "id": 4,
-        "name": "Linda Wijaya",
-        "region": "Surabaya",
-        "total_stores": 5,
-        "stores": [
-          "Perfume Gallery - Tunjungan",
-          "Scent Studio - Gubeng",
-          "Fragrance House - Darmo",
-          "Aroma Collection - Manyar",
-          "Essence Villa - Klampis"
-        ]
-      },
-      {
-        "id": 5,
-        "name": "Denny Pratama",
-        "region": "Bali",
-        "total_stores": 6,
-        "stores": [
-          "Perfume Oasis - Kuta",
-          "Scent Paradise - Seminyak",
-          "Fragrance Bay - Nusa Dua",
-          "Aroma Beach - Jimbaran",
-          "Essence Island - Sanur",
-          "Perfume Tropical - Ubud"
-        ]
-      }
-    ]
+  "regions": {
+    "Jabodetabek": {
+      "sales": [
+        {
+          "id": 1,
+          "name": "Ahmad Rizki",
+          "area": "Jakarta Selatan",
+          "stores": [
+            {
+              "id": 1,
+              "name": "Parfum King - Kemang",
+              "address": "Jl. Kemang Raya No. 10, Jakarta Selatan",
+              "phone": "021-12345678",
+              "stock_30ml": 50,
+              "stock_roll_on": 30,
+              "stock_20ml": 20
+            },
+            {
+              "id": 2,
+              "name": "Scent Haven - Cipete",
+              "address": "Jl. Cipete Raya No. 15, Jakarta Selatan",
+              "phone": "021-87654321",
+              "stock_30ml": 40,
+              "stock_roll_on": 25,
+              "stock_20ml": 15
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Sarah Putri",
+          "area": "Jakarta Pusat",
+          "stores": [
+            {
+              "id": 3,
+              "name": "Perfume Boutique - Menteng",
+              "address": "Jl. Menteng Raya No. 20, Jakarta Pusat",
+              "phone": "021-11223344",
+              "stock_30ml": 60,
+              "stock_roll_on": 35,
+              "stock_20ml": 25
+            }
+          ]
+        }
+      ]
+    },
+    "Bandung": {
+      "sales": [
+        {
+          "id": 3,
+          "name": "Budi Santoso",
+          "area": "Bandung Kota",
+          "stores": [
+            {
+              "id": 4,
+              "name": "Perfume Lab - Dago",
+              "address": "Jl. Ir. H. Djuanda No. 30, Bandung",
+              "phone": "022-9876543",
+              "stock_30ml": 45,
+              "stock_roll_on": 28,
+              "stock_20ml": 18
+            }
+          ]
+        }
+      ]
+    },
+    "Semarang": {
+      "sales": [
+        {
+          "id": 4,
+          "name": "Diana Putri",
+          "area": "Semarang Tengah",
+          "stores": [
+            {
+              "id": 5,
+              "name": "Aroma Paradise - Simpang Lima",
+              "address": "Jl. Simpang Lima No. 25, Semarang",
+              "phone": "024-5678901",
+              "stock_30ml": 55,
+              "stock_roll_on": 32,
+              "stock_20ml": 22
+            }
+          ]
+        }
+      ]
+    },
+    "Jogjakarta": {
+      "sales": [
+        {
+          "id": 5,
+          "name": "Eko Prasetyo",
+          "area": "Yogyakarta Kota",
+          "stores": [
+            {
+              "id": 6,
+              "name": "Scent Studio - Malioboro",
+              "address": "Jl. Malioboro No. 40, Yogyakarta",
+              "phone": "0274-1234567",
+              "stock_30ml": 35,
+              "stock_roll_on": 20,
+              "stock_20ml": 15
+            }
+          ]
+        }
+      ]
+    },
+    "Surabaya": {
+      "sales": [
+        {
+          "id": 6,
+          "name": "Linda Wijaya",
+          "area": "Surabaya Pusat",
+          "stores": [
+            {
+              "id": 7,
+              "name": "Perfume Gallery - Tunjungan",
+              "address": "Jl. Tunjungan No. 50, Surabaya",
+              "phone": "031-9876543",
+              "stock_30ml": 65,
+              "stock_roll_on": 38,
+              "stock_20ml": 28
+            }
+          ]
+        }
+      ]
+    }
   }
-  
+}
