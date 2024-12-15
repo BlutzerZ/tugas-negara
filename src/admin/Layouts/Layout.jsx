@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom'; // Tambahkan import ini
-import Header from '../Components/Header';
-import Sidebar from '../Components/Sidebar';
-import Footer from '../Components/Footer';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import Footer from '../components/Footer';
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

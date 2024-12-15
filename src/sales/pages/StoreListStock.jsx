@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import storesData from "../../database/stores.json";
 
-const StoreList = () => {
+const StoreListStock = () => {
   const [stores, setStores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -102,7 +101,7 @@ const StoreList = () => {
                       scope="col"
                       className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
                     >
-                      Alamat
+                      Stok
                     </th>
                     <th
                       scope="col"
@@ -123,12 +122,31 @@ const StoreList = () => {
                           {store.name}
                         </div>
                       </td>
-                      <td className="p-4 text-gray-700 dark:text-gray-300">
-                        {store.address}
+                      <td className="p-4">
+                        <div className="grid grid-cols-3 gap-2 text-sm">
+                          {store.products.map((product) => {
+                            return (
+                              <div>
+                                <span className="font-medium">
+                                  {product.name}:
+                                </span>{" "}
+                                {product.stock}
+                              </div>
+                            );
+                          })}
+                          {/* <div>
+                            <span className="font-medium">Roll:</span>{" "}
+                            {store.stock_roll_on}
+                          </div>
+                          <div>
+                            <span className="font-medium">20ml:</span>{" "}
+                            {store.stock_20ml}
+                          </div> */}
+                        </div>
                       </td>
                       <td className="p-4">
                         <Link
-                          to={`/stores/${store.id}/edit`}
+                          to={`/stores/${store.id}/edit-stock`}
                           className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
                         >
                           Edit
@@ -146,4 +164,4 @@ const StoreList = () => {
   );
 };
 
-export default StoreList;
+export default StoreListStock;

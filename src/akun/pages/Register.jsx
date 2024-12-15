@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -18,10 +18,46 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Register data:', formData);
-    // Implement register logic here
+  
+    // Check if passwords match
+    if (formData.password !== formData.confirmPassword) {
+      alert("Kata sandi dan konfirmasi kata sandi tidak cocok.");
+      return;
+    }
+  
+    try {
+      const response = await fetch('http://localhost:8000/auth/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          name: formData.name,
+          username: formData.email,
+          region: formData.region,
+          phone: formData.phone,
+          password: formData.password,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Gagal membuat akun');
+      }
+  
+      const data = await response.json();
+      console.log('Register success:', data);
+      alert('Akun berhasil dibuat. Silakan login.');
+  
+      // Optionally, redirect to login page
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error:', error.message);
+      alert(`Gagal membuat akun: ${error.message}`);
+    }
   };
 
   return (

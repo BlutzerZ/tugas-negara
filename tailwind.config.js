@@ -1,4 +1,6 @@
-module.exports = {
+import flowbitePlugin from 'flowbite/plugin';
+
+export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./node_modules/flowbite/**/*.js"
@@ -23,6 +25,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('flowbite/plugin')
+    flowbitePlugin,
   ],
-}
+};
