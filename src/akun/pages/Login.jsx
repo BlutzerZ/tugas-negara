@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login data:', { email, password });
-    // Implement login logic here
+
+    try {
+      const response = await fetch('http://localhost:8000/auth/sign-in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Email atau Password salah');
+      }
+  
+      const data = await response.json();
+      console.log('Loin success:', data);
+      alert('Login Berhasil');
+
+      localStorage.setItem("jwt", data.data.token)
+  
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error:', error.message);
+      alert(`Gagal login: ${error.message}`);
+    }
   };
 
   return (
