@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import storesData from "../../database/stores.json";
 
-const EditStore = () => {
+const EditStoreStock = () => {
   const { store_id } = useParams();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
@@ -24,11 +24,19 @@ const EditStore = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        const { id, products, image, ...filteredData } = data.data;
-        setStore(data.data);
-        setFormData(filteredData);
-        console.log(filteredData);
+        const data = await response.json(); // Parsing JSON dari response
+        setStore(data.data); // Asumsikan API mengembalikan array store
+        // console.log(data.data);
+        if (data.data.products) {
+          const productData = {};
+          data.data.products.forEach((item) => {
+            // Format key untuk formData
+            const key = `stock_${item.name.toLowerCase().replace(/ /g, "_")}`;
+            productData[key] = item.stock;
+          });
+          setFormData(productData);
+          console.log(productData);
+        }
       } catch (error) {
         console.error("Failed to fetch stores:", error);
       }
@@ -93,10 +101,10 @@ const EditStore = () => {
               <ol className="inline-flex items-center space-x-1 md:space-x-2">
                 <li className="inline-flex items-center">
                   <Link
-                    to="/stores"
+                    to="/stores-stock"
                     className="text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white"
                   >
-                    Toko
+                    Stock Toko
                   </Link>
                 </li>
                 <li>
@@ -114,14 +122,14 @@ const EditStore = () => {
                       ></path>
                     </svg>
                     <span className="text-gray-400 ml-1 md:ml-2 dark:text-gray-500">
-                      Edit Toko
+                      Edit Stok
                     </span>
                   </div>
                 </li>
               </ol>
             </nav>
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              Edit Detail Toko
+              Edit Stok Toko
             </h1>
           </div>
         </div>
@@ -132,17 +140,17 @@ const EditStore = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Detail Toko
+              Stok Toko
             </h3>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Nama Toko
+                  Stok 30ml
                 </label>
                 <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
+                  type="number"
+                  name="stock_30_ml"
+                  value={formData.stock_30_ml}
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   required
@@ -150,92 +158,28 @@ const EditStore = () => {
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Nomor Telepon
+                  Stok Roll On
                 </label>
                 <input
-                  type="text"
-                  name="num"
-                  value={formData.num}
+                  type="number"
+                  name="stock_roll_on"
+                  value={formData.stock_roll_on}
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   required
                 />
               </div>
-              {/* <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Nama Sales
-                            </label>
-                            <input
-                                type="text"
-                                name="sales_name"
-                                value={formData.sales_name}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                required
-                            />
-                        </div> */}
-              {/* <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Wilayah Sales
-              </label>
-              <input
-                type="text"
-                name="region"
-                value={formData.region}
-                onChange={handleChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                required
-              />
-            </div> */}
-              <div className="lg:col-span-2">
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Alamat
-                </label>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  rows="4"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  required
-                ></textarea>
-              </div>
-              {/* <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Share Location
-                            </label>
-                            {isLoaded ? (
-                                <GoogleMap
-                                    mapContainerStyle={{ height: "300px" }}
-                                    center={{ lat: formData.lat, lng: formData.lng }}
-                                    zoom={15}
-                                    onClick={handleMapClick}
-                                    onLoad={setMap}
-                                >
-                                    {marker && <Marker position={{ lat: formData.lat, lng: formData.lng }} />}
-                                </GoogleMap>
-                            ) : (
-                                <div>Loading...</div>
-                            )}
-                            <input
-                                type="text"
-                                name="shareloc"
-                                value={formData.shareloc}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                required
-                            />
-                        </div> */}
               <div>
-                <img src={`http://localhost:8000/${store.image}`} alt="" />
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Foto Toko
+                  Stok 20ml
                 </label>
                 <input
-                  type="file"
-                  name="image"
+                  type="number"
+                  name="stock_20_ml"
+                  value={formData.stock_20_ml}
                   onChange={handleChange}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  required
                 />
               </div>
             </div>
@@ -261,4 +205,4 @@ const EditStore = () => {
   );
 };
 
-export default EditStore;
+export default EditStoreStock;

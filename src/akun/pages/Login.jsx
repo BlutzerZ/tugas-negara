@@ -1,38 +1,34 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8000/auth/sign-in', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/auth/sign-in", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username: email,
-          password: password,
-        }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Email atau Password salah');
+        throw new Error(errorData.message || "Email atau Password salah");
       }
-  
-      const data = await response.json();
-      console.log('Loin success:', data);
-      alert('Login Berhasil');
 
-      localStorage.setItem("jwt", data.data.token)
-  
-      window.location.href = '/';
+      const data = await response.json();
+      console.log("Loin success:", data);
+      alert("Login Berhasil");
+
+      localStorage.setItem("jwt", data.data.token);
+
+      window.location.href = "/";
     } catch (error) {
-      console.error('Error:', error.message);
+      console.error("Error:", error.message);
       alert(`Gagal login: ${error.message}`);
     }
   };
@@ -45,7 +41,10 @@ const Login = () => {
         </h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
               Email Anda
             </label>
             <input
@@ -60,7 +59,10 @@ const Login = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
               Kata Sandi Anda
             </label>
             <input
@@ -84,11 +86,17 @@ const Login = () => {
               />
             </div>
             <div className="ml-3 text-sm">
-              <label htmlFor="remember" className="font-medium text-gray-900 dark:text-white">
+              <label
+                htmlFor="remember"
+                className="font-medium text-gray-900 dark:text-white"
+              >
                 Ingat Saya
               </label>
             </div>
-            <a href="#" className="ml-auto text-sm text-primary-700 hover:underline dark:text-primary-500">
+            <a
+              href="#"
+              className="ml-auto text-sm text-primary-700 hover:underline dark:text-primary-500"
+            >
               Lupa Kata Sandi?
             </a>
           </div>
@@ -99,7 +107,13 @@ const Login = () => {
             Masuk
           </button>
           <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Belum terdaftar? <a href="/register" className="text-primary-700 hover:underline dark:text-primary-500">Buat akun</a>
+            Belum terdaftar?{" "}
+            <a
+              href="/register"
+              className="text-primary-700 hover:underline dark:text-primary-500"
+            >
+              Buat akun
+            </a>
           </div>
         </form>
       </div>
