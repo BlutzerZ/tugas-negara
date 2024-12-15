@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const StoreListStock = () => {
+  const navigate = useNavigate();
   const [stores, setStores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -46,28 +47,8 @@ const StoreListStock = () => {
         <div className="w-full mb-1">
           <div className="mb-4 flex justify-between items-center">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              Daftar Toko
+              Daftar Stock Toko
             </h1>
-            <Link
-              to="/stores/add"
-              className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                ></path>
-              </svg>
-              Tambah Toko
-            </Link>
           </div>
           <div className="flex flex-col items-center md:flex-row md:space-x-4">
             <form className="flex items-center w-full md:w-1/2">
@@ -103,17 +84,14 @@ const StoreListStock = () => {
                     >
                       Stok
                     </th>
-                    <th
-                      scope="col"
-                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
-                      Aksi
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                   {filteredStores.map((store) => (
                     <tr
+                      onClick={() => {
+                        navigate(`/stores/${store.id}/edit-stock`);
+                      }}
                       key={store.id}
                       className="hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
@@ -143,14 +121,6 @@ const StoreListStock = () => {
                             {store.stock_20ml}
                           </div> */}
                         </div>
-                      </td>
-                      <td className="p-4">
-                        <Link
-                          to={`/stores/${store.id}/edit-stock`}
-                          className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-                        >
-                          Edit
-                        </Link>
                       </td>
                     </tr>
                   ))}

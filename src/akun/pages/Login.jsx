@@ -1,8 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const toggleDarkMode = () => {
+    if (document.documentElement.classList.contains("dark")) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("color-theme", "light");
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("color-theme", "dark");
+    }
+  };
+
+  useEffect(() => {
+    // Cek apakah sudah ada token JWT
+    if (localStorage.getItem("jwt")) {
+      navigate("/");
+    }
+
+    // Logika untuk dark mode
+    const storedTheme = localStorage.getItem("color-theme");
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    if (storedTheme === "dark" || (storedTheme === null && prefersDarkMode)) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,6 +44,10 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+        }),
       });
 
       if (!response.ok) {
@@ -23,8 +58,26 @@ const Login = () => {
       const data = await response.json();
       console.log("Loin success:", data);
       alert("Login Berhasil");
-
       localStorage.setItem("jwt", data.data.token);
+
+      try {
+        const responseUser = await fetch("http://localhost:8000/user", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!responseUser.ok) {
+          const errorData = await responseUser.json();
+          throw new Error(errorData.message || "Failed to get personal user");
+        }
+        const dataUser = await responseUser.json();
+        localStorage.setItem("role", dataUser.data.role.name);
+      } catch (error) {
+        console.error("Error:", error.message);
+      }
 
       window.location.href = "/";
     } catch (error) {
@@ -35,7 +88,21 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-lg shadow dark:bg-gray-800">
+      <div className="w-full max-w-md p-6 space-y-8 bg-white rounded-lg shadow dark:bg-gray-800 relative">
+        <button
+          onClick={toggleDarkMode}
+          type="button"
+          className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+        </button>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           Masuk ke Platform
         </h2>

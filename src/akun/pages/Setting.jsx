@@ -34,10 +34,37 @@ const UserProfile = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated user data:", userData);
-    // Handle profile update logic
+    try {
+      const responseUser = await fetch("http://localhost:8000/user", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          new_name: userData.name,
+          new_phone: userData.phone,
+          old_password: userData.currentPassword,
+          new_password:
+            userData.newPassword == userData.confirmPassword
+              ? userData.newPassword
+              : null,
+        }),
+      });
+
+      if (!responseUser.ok) {
+        const errorData = await responseUser.json();
+        throw new Error(errorData.message || "Failed to get personal user");
+      }
+      const data = await responseUser.json();
+      alert("Success Edit Data");
+      setUserData(data.data);
+    } catch (error) {
+      alert("Failed Edit Data");
+      console.error("Error:", error.message);
+    }
   };
 
   return (
@@ -45,28 +72,11 @@ const UserProfile = () => {
       <div className="w-full mb-1">
         <div className="mb-4">
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-            Profil Pengguna
+            Setting
           </h1>
         </div>
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
           <div className="grid gap-4 mb-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                value={userData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
             <div>
               <label
                 htmlFor="name"
@@ -101,32 +111,18 @@ const UserProfile = () => {
                 required
               />
             </div>
-            <div>
-              <label
-                htmlFor="region"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Wilayah
-              </label>
-              <input
-                type="text"
-                id="region"
-                name="region"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                value={userData.region}
-                onChange={handleChange}
-                required
-              />
-            </div>
           </div>
 
-          {/* <div className="mb-4">
+          <div className="mb-4">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
               Ubah Password
             </h3>
             <div className="grid gap-4">
               <div>
-                <label htmlFor="currentPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label
+                  htmlFor="currentPassword"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
                   Password Saat Ini
                 </label>
                 <input
@@ -139,7 +135,10 @@ const UserProfile = () => {
                 />
               </div>
               <div>
-                <label htmlFor="newPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label
+                  htmlFor="newPassword"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
                   Password Baru
                 </label>
                 <input
@@ -152,7 +151,10 @@ const UserProfile = () => {
                 />
               </div>
               <div>
-                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
                   Konfirmasi Password Baru
                 </label>
                 <input
@@ -165,7 +167,7 @@ const UserProfile = () => {
                 />
               </div>
             </div>
-          </div> */}
+          </div>
 
           <button
             type="submit"

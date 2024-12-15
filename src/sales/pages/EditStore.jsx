@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import storesData from "../../database/stores.json";
 
 const EditStore = () => {
   const { store_id } = useParams();
