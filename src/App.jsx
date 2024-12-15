@@ -11,6 +11,7 @@ import UserProfile from "./akun/pages/UserProfile";
 import SalesStores from "./admin/pages/SalesStores";
 import EditStoreStock from "./sales/pages/EditStoreStock";
 import EditStore from "./sales/pages/EditStore";
+import Setting from "./akun/pages/Setting";
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
           <Route path="stores/:store_id/edit" element={<EditStore />} />
           <Route path="sales" element={<SalesList />} />
           <Route path="profile" element={<UserProfile />} />
-          <Route path="sales/:id" element={<SalesStores />} />
+          <Route path="setting" element={<Setting />} />
+          <Route path="sales/:sales_id" element={<SalesStores />} />
         </Route>
       </Routes>
     </Router>

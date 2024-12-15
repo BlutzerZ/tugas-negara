@@ -1,17 +1,43 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetcData = async () => {
+      try {
+        const responseUser = await fetch("http://localhost:8000/user", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!responseUser.ok) {
+          const errorData = await responseUser.json();
+          throw new Error(errorData.message || "Failed to get personal user");
+        }
+        const data = await responseUser.json();
+        setProfile(data.data);
+      } catch (error) {
+        console.error("Error:", error.message);
+      }
+    };
+
+    fetcData();
+  }, []);
 
   const toggleDarkMode = () => {
-    if (document.documentElement.classList.contains('dark')) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('color-theme', 'light');
+    if (document.documentElement.classList.contains("dark")) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("color-theme", "light");
     } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('color-theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("color-theme", "dark");
     }
   };
 
@@ -21,7 +47,9 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
 
   const handleLogout = () => {
     // Implement logout logic here
-    navigate('/login');
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("role");
+    navigate("/login");
   };
 
   return (
@@ -35,12 +63,30 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               className="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {isSidebarOpen ? (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  ></path>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path>
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clipRule="evenodd"
+                  ></path>
                 </svg>
               )}
             </button>
@@ -51,14 +97,31 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               </span>
             </Link>
             <form action="#" method="GET" className="hidden lg:block lg:pl-3.5">
-              <label htmlFor="topbar-search" className="sr-only">Search</label>
+              <label htmlFor="topbar-search" className="sr-only">
+                Search
+              </label>
               <div className="relative mt-1 lg:w-96">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path>
+                  <svg
+                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    ></path>
                   </svg>
                 </div>
-                <input type="text" name="search" id="topbar-search" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" />
+                <input
+                  type="text"
+                  name="search"
+                  id="topbar-search"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="Search"
+                />
               </div>
             </form>
           </div>
@@ -99,16 +162,17 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 <div className="absolute right-0 top-10 z-50 my-4 w-56 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600">
                   <div className="px-4 py-3">
                     <p className="text-sm text-gray-900 dark:text-white">
-                      Neil Sims
+                      {profile.name}
                     </p>
                     <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-                      neil.sims@flowbite.com
+                      {profile.email}
                     </p>
                   </div>
                   <ul className="py-1">
                     <li>
                       <Link
                         to="profile"
+                        onClick={toggleProfileDropdown}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         Profil Saya
@@ -116,7 +180,8 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                     </li>
                     <li>
                       <Link
-                        to="settings"
+                        to="setting"
+                        onClick={toggleProfileDropdown}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
                         Pengaturan
