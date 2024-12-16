@@ -20,7 +20,8 @@ const SalesList = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const url = createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST);
+        const url = new URL(createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST));
+        // const url = new URL();
         url.searchParams.append("order", "asc");
         url.searchParams.append("include_deleted", "false");
         url.searchParams.append("role_type", "sales");
@@ -32,7 +33,10 @@ const SalesList = () => {
 
         const response = await fetch(url, {
           method: "GET",
-          headers: getAuthHeader(),
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            "Content-Type": "application/json",
+          },
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

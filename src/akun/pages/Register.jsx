@@ -73,18 +73,21 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(createApiUrl( API_CONFIG.ENDPOINTS.AUTH.SIGNUP), {
-        method: "POST",
-        headers: API_CONFIG.HEADERS,
-        body: JSON.stringify({
-          email: formData.email,
-          name: formData.name,
-          username: formData.email,
-          region: formData.region,
-          phone: formData.phone,
-          password: formData.password,
-        }),
-      });
+      const response = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNUP),
+        {
+          method: "POST",
+          headers: API_CONFIG.HEADERS,
+          body: JSON.stringify({
+            email: formData.email,
+            name: formData.name,
+            username: formData.email,
+            region: formData.region,
+            phone: formData.phone,
+            password: formData.password,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -174,6 +177,7 @@ const Register = () => {
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               required
             >
+              <option>--- Pilih Wilayah ---</option>
               {regions.map((r) => {
                 return <option value={r}>{r}</option>;
               })}

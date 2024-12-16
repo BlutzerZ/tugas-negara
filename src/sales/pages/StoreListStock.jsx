@@ -12,17 +12,18 @@ const StoreListStock = () => {
       try {
         const baseUrl = createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST);
         const params = new URLSearchParams({
-          order: 'asc',
-          include_deleted: 'false'
+          order: "asc",
+          include_deleted: "false",
+          search_query: searchTerm,
         });
-        
+
         const urlWithParams = `${baseUrl}?${params.toString()}`;
-        
+
         const response = await fetch(urlWithParams, {
           method: "GET",
           headers: getAuthHeader(),
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -33,11 +34,9 @@ const StoreListStock = () => {
         console.error("Failed to fetch stores:", error);
       }
     };
-  
-    fetchStores();
-  }, []);
-  
 
+    fetchStores();
+  }, [searchTerm]);
 
   const filteredStores = stores.filter(
     (store) =>

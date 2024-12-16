@@ -11,10 +11,11 @@ const SalesStores = () => {
     const fetchUserStore = async () => {
       try {
         const response = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id}) + "?order=asc&include_deleted=false",
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id }) +
+            "?order=asc&include_deleted=false",
           {
             method: "GET",
-            headers: getAuthHeader()
+            headers: getAuthHeader(),
           }
         );
         if (!response.ok) {
@@ -31,7 +32,7 @@ const SalesStores = () => {
     const fetchSales = async () => {
       try {
         const response = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST +`/${sales_id}`),
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST + `/${sales_id}`),
           {
             method: "GET",
             headers: getAuthHeader(),

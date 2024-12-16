@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const EditStore = () => {
   const { store_id } = useParams();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
   const [formData, setFormData] = useState({});
+  const [mapCenter, setMapCenter] = useState([]);
+  const [markerPosition, setMarkerPosition] = useState([]);
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -18,8 +21,7 @@ const EditStore = () => {
             headers: getAuthHeader(),
           }
         );
-  
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -27,7 +29,10 @@ const EditStore = () => {
         const { id, products, image, ...filteredData } = data.data;
         setStore(data.data);
         setFormData(filteredData);
-        console.log(filteredData);
+        setMapCenter(data.data.loc.replace(/[()]/g, "").split(",").map(Number));
+        setMarkerPosition(
+          data.data.loc.replace(/[()]/g, "").split(",").map(Number)
+        );
       } catch (error) {
         console.error("Failed to fetch stores:", error);
       }
@@ -35,6 +40,54 @@ const EditStore = () => {
 
     fetchStores();
   }, []);
+
+  const ChangeMapCenter = ({ center }) => {
+    const map = useMap();
+    map.setView(center);
+    return null;
+  };
+
+  const LocationPicker = ({ position, setPosition }) => {
+    const map = useMap();
+
+    useEffect(() => {
+      map.on("click", (e) => {
+        setPosition([e.latlng.lat, e.latlng.lng]);
+      });
+    }, [map]);
+
+    return position ? <Marker position={position} /> : null;
+  };
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      loc: `(${markerPosition[0]}, ${markerPosition[1]})`,
+    }));
+  }, [markerPosition]);
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newPosition = [latitude, longitude];
+          setMapCenter(newPosition);
+          setMarkerPosition(newPosition);
+          setFormData((prev) => ({
+            ...prev,
+            loc: `(${markerPosition[0]}, ${markerPosition[1]})`,
+          }));
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Tidak dapat mendapatkan lokasi. Pastikan GPS aktif.");
+        }
+      );
+    } else {
+      alert("Browser Anda tidak mendukung geolokasi");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,8 +116,6 @@ const EditStore = () => {
           body: uploadData,
         }
       );
-  
-  
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -162,32 +213,7 @@ const EditStore = () => {
                   required
                 />
               </div>
-              {/* <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Nama Sales
-                            </label>
-                            <input
-                                type="text"
-                                name="sales_name"
-                                value={formData.sales_name}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                required
-                            />
-                        </div> */}
-              {/* <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Wilayah Sales
-              </label>
-              <input
-                type="text"
-                name="region"
-                value={formData.region}
-                onChange={handleChange}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                required
-              />
-            </div> */}
+
               <div className="lg:col-span-2">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Alamat
@@ -201,37 +227,51 @@ const EditStore = () => {
                   required
                 ></textarea>
               </div>
-              {/* <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Share Location
-                            </label>
-                            {isLoaded ? (
-                                <GoogleMap
-                                    mapContainerStyle={{ height: "300px" }}
-                                    center={{ lat: formData.lat, lng: formData.lng }}
-                                    zoom={15}
-                                    onClick={handleMapClick}
-                                    onLoad={setMap}
-                                >
-                                    {marker && <Marker position={{ lat: formData.lat, lng: formData.lng }} />}
-                                </GoogleMap>
-                            ) : (
-                                <div>Loading...</div>
-                            )}
-                            <input
-                                type="text"
-                                name="shareloc"
-                                value={formData.shareloc}
-                                onChange={handleChange}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                required
-                            />
-                        </div> */}
+
+              {/* Lokasi Map */}
               <div>
-                <img src={`http://localhost:8000/${store.image}`} alt="" />
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Lokasi Toko
+                </label>
+
+                <div style={{ height: "400px", width: "100%" }}>
+                  <MapContainer
+                    center={mapCenter}
+                    zoom={13}
+                    style={{ height: "100%", width: "100%" }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <ChangeMapCenter center={mapCenter} />
+                    <LocationPicker
+                      position={markerPosition}
+                      setPosition={setMarkerPosition}
+                    />
+                  </MapContainer>
+                </div>
+                <div className="mt-2 text-sm text-gray-500">
+                  Koordinat: {formData.loc}
+                </div>
+                <button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  className="mt-4 w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                >
+                  Gunakan Lokasi Saat Ini
+                </button>
+              </div>
+
+              <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Foto Toko
                 </label>
+                <img
+                  src={`${API_CONFIG.BASE_URL}/${store.image}`}
+                  alt=""
+                  className="h-[400px] mx-auto mb-11"
+                />
                 <input
                   type="file"
                   name="image"

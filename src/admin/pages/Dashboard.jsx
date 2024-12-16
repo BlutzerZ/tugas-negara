@@ -34,6 +34,29 @@ const Dashboard = () => {
     return (
       <div className="px-4 pt-6">
         <div className="container mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gray-100 rounded-full dark:bg-gray-700">
+                <svg
+                  className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.356 4.184a1 1 0 00.95.69h4.396c.969 0 1.371 1.24.588 1.81l-3.557 2.57a1 1 0 00-.364 1.118l1.356 4.184c.3.921-.755 1.688-1.54 1.118l-3.557-2.57a1 1 0 00-1.176 0l-3.557 2.57c-.784.57-1.839-.197-1.54-1.118l1.356-4.184a1 1 0 00-.364-1.118L2.462 9.61c-.783-.57-.38-1.81.588-1.81h4.396a1 1 0 00.95-.69l1.356-4.184z"></path>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Jumlah Sales
+                </p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {info.total_sales}
+                </h2>
+              </div>
+            </div>
+          </div>
+
           {/* Card 1 */}
           <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div className="flex items-center space-x-4">
@@ -58,28 +81,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gray-100 rounded-full dark:bg-gray-700">
-                <svg
-                  className="w-6 h-6 text-gray-600 dark:text-gray-300"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.356 4.184a1 1 0 00.95.69h4.396c.969 0 1.371 1.24.588 1.81l-3.557 2.57a1 1 0 00-.364 1.118l1.356 4.184c.3.921-.755 1.688-1.54 1.118l-3.557-2.57a1 1 0 00-1.176 0l-3.557 2.57c-.784.57-1.839-.197-1.54-1.118l1.356-4.184a1 1 0 00-.364-1.118L2.462 9.61c-.783-.57-.38-1.81.588-1.81h4.396a1 1 0 00.95-.69l1.356-4.184z"></path>
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Jumlah Sales
-                </p>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {info.total_sales}
-                </h2>
-              </div>
-            </div>
-          </div>
           {/* Card 4 */}
           <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div className="flex items-center space-x-4">
@@ -158,6 +159,29 @@ const Dashboard = () => {
     return (
       <div className="px-4 pt-6">
         <div className="container mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gray-100 rounded-full dark:bg-gray-700">
+                <svg
+                  className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.356 4.184a1 1 0 00.95.69h4.396c.969 0 1.371 1.24.588 1.81l-3.557 2.57a1 1 0 00-.364 1.118l1.356 4.184c.3.921-.755 1.688-1.54 1.118l-3.557-2.57a1 1 0 00-1.176 0l-3.557 2.57c-.784.57-1.839-.197-1.54-1.118l1.356-4.184a1 1 0 00-.364-1.118L2.462 9.61c-.783-.57-.38-1.81.588-1.81h4.396a1 1 0 00.95-.69l1.356-4.184z"></path>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Jumlah Toko
+                </p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {info.total_store}
+                </h2>
+              </div>
+            </div>
+          </div>
+
           {/* Card 4 */}
           <div className="p-4 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div className="flex items-center space-x-4">
