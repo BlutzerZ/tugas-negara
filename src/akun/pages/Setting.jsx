@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
+import { API_CONFIG,createApiUrl, getAuthHeader } from "../../config/api";
 
-const UserProfile = () => {
+const Setting = () => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/user`, {
+        const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE), {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            "Content-Type": "application/json",
-          },
+          headers: getAuthHeader(),
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -37,12 +35,9 @@ const UserProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const responseUser = await fetch("http://localhost:8000/user", {
+      const responseUser = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE), {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify({
           new_name: userData.name,
           new_phone: userData.phone,
@@ -181,4 +176,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Setting;

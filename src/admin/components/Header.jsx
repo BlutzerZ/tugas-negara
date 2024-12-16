@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -9,12 +10,9 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   useEffect(() => {
     const fetcData = async () => {
       try {
-        const responseUser = await fetch("http://localhost:8000/user", {
+        const responseUser = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE), {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            "Content-Type": "application/json",
-          },
+          headers: getAuthHeader(),
         });
 
         if (!responseUser.ok) {

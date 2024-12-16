@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
 
 const EditStore = () => {
   const { store_id } = useParams();
@@ -11,15 +12,14 @@ const EditStore = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/stores/${parseInt(store_id)}`,
+          createApiUrl(API_CONFIG.ENDPOINTS.STORES.DETAIL, { id: store_id }),
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              "Content-Type": "application/json",
-            },
+            headers: getAuthHeader(),
           }
         );
+  
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -54,15 +54,17 @@ const EditStore = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/stores/${parseInt(store_id)}`,
+        createApiUrl(API_CONFIG.ENDPOINTS.STORES.DETAIL, { id: store_id }),
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
           },
-          body: uploadData, // Gunakan FormData untuk mengirim data
+          body: uploadData,
         }
       );
+  
+  
 
       if (!response.ok) {
         const errorData = await response.json();

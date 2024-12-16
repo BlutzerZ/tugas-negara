@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const StoreListStock = () => {
   const navigate = useNavigate();
@@ -7,32 +8,36 @@ const StoreListStock = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fungsi untuk mengambil data dari API
     const fetchStores = async () => {
       try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/stores?order=asc&include_deleted=false",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const baseUrl = createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST);
+        const params = new URLSearchParams({
+          order: 'asc',
+          include_deleted: 'false'
+        });
+        
+        const urlWithParams = `${baseUrl}?${params.toString()}`;
+        
+        const response = await fetch(urlWithParams, {
+          method: "GET",
+          headers: getAuthHeader(),
+        });
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json(); // Parsing JSON dari response
-        setStores(data.data); // Asumsikan API mengembalikan array store
+        const data = await response.json();
+        setStores(data.data);
         console.log(data);
       } catch (error) {
         console.error("Failed to fetch stores:", error);
       }
     };
-
+  
     fetchStores();
-  }, []); // [] memastikan API hanya dipanggil sekali saat komponen di-mount
+  }, []);
+  
+
 
   const filteredStores = stores.filter(
     (store) =>

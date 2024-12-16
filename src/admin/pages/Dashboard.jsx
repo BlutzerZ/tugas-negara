@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const Dashboard = () => {
   const [info, setInfo] = useState(null);
@@ -7,12 +8,9 @@ const Dashboard = () => {
     const fetchStores = async () => {
       try {
         console.log("Fetching API...");
-        const response = await fetch("http://127.0.0.1:8000/info", {
+        const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.INFO), {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            "Content-Type": "application/json",
-          },
+          headers: getAuthHeader(),
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

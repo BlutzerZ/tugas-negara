@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
-
+import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
 const AddStore = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -72,30 +72,30 @@ const AddStore = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:8000/stores", {
+      const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST), {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
-        body: uploadData, // Gunakan FormData untuk mengirim data
+        body: uploadData,
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Gagal menambahkan toko");
       }
-
+  
       const data = await response.json();
       console.log("Toko berhasil ditambahkan:", data);
       alert("Toko berhasil ditambahkan!");
-
+  
       navigate("/stores");
     } catch (error) {
       console.error("Error:", error.message);
       alert(`Error: ${error.message}`);
     }
   };
-
+  
   if (loadError) {
     return <div>Error loading Google Maps API</div>;
   }

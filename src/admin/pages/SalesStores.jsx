@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SalesStores = () => {
   const { sales_id } = useParams();
@@ -10,13 +11,10 @@ const SalesStores = () => {
     const fetchUserStore = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/users/${sales_id}/stores?order=asc&include_deleted=false`,
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id}) + "?order=asc&include_deleted=false",
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              "Content-Type": "application/json",
-            },
+            headers: getAuthHeader()
           }
         );
         if (!response.ok) {
@@ -33,13 +31,10 @@ const SalesStores = () => {
     const fetchSales = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/users/${sales_id}`,
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST +`/${sales_id}`),
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              "Content-Type": "application/json",
-            },
+            headers: getAuthHeader(),
           }
         );
         if (!response.ok) {

@@ -5,6 +5,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SalesList = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SalesList = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const url = new URL("http://127.0.0.1:8000/users");
+        const url = createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST);
         url.searchParams.append("order", "asc");
         url.searchParams.append("include_deleted", "false");
         url.searchParams.append("role_type", "sales");
@@ -31,10 +32,7 @@ const SalesList = () => {
 
         const response = await fetch(url, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-            "Content-Type": "application/json",
-          },
+          headers: getAuthHeader(),
         });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

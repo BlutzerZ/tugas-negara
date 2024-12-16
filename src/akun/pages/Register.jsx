@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_CONFIG, createApiUrl } from "../../config/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -72,11 +73,9 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/auth/sign-up", {
+      const response = await fetch(createApiUrl( API_CONFIG.ENDPOINTS.AUTH.SIGNUP), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: API_CONFIG.HEADERS,
         body: JSON.stringify({
           email: formData.email,
           name: formData.name,

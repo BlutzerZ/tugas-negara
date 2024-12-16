@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import storesData from "../../database/stores.json";
+import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -12,15 +12,14 @@ const StoreList = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/stores?order=asc&include_deleted=false",
+          `${createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST)}?order=asc&include_deleted=false`,
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-              "Content-Type": "application/json",
-            },
+            headers: getAuthHeader(),
           }
         );
+  
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
