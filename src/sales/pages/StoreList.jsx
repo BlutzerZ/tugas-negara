@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -12,14 +12,15 @@ const StoreList = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          `${createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST)}?order=asc&include_deleted=false`,
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.STORES.LIST
+          )}?order=asc&include_deleted=false&search_query=${searchTerm}`,
           {
             method: "GET",
             headers: getAuthHeader(),
           }
         );
-  
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -32,7 +33,7 @@ const StoreList = () => {
     };
 
     fetchStores();
-  }, []); // [] memastikan API hanya dipanggil sekali saat komponen di-mount
+  }, [searchTerm]); // [] memastikan API hanya dipanggil sekali saat komponen di-mount
 
   const filteredStores = stores.filter(
     (store) =>
