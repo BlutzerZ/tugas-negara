@@ -423,7 +423,7 @@ const EditStore = () => {
                         {/* Image Upload */}
                         <div className="lg:col-span-2">
                             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Foto Toko
+                                Foto Nota
                             </label>
                             {previewImage && (
                                 <div className="mb-4">

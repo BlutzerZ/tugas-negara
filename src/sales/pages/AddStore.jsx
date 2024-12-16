@@ -83,7 +83,7 @@ const AddStore = () => {
         }
 
         if (!formData.image) {
-            errors.image = "Foto toko wajib diupload";
+            errors.image = "Foto nota wajib diupload";
         }
 
         // Validate stock (must be non-negative numbers)
@@ -373,7 +373,7 @@ const AddStore = () => {
                         {/* Image Upload */}
                         <div className="lg:col-span-2">
                             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Foto Toko
+                                Foto Nota
                             </label>
                             <input
                                 type="file"
