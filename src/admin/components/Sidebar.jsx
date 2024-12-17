@@ -24,14 +24,13 @@ const Sidebar = ({ onLinkClick }) => {
       <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
         <div className="flex-1 px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
           <ul className="pb-2 space-y-2">
+            {/* Dashboard Link */}
             <li>
               <Link
                 to="/"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg
@@ -46,6 +45,7 @@ const Sidebar = ({ onLinkClick }) => {
               </Link>
             </li>
 
+            {/* Wilayah Dropdown */}
             <li>
               <button
                 type="button"
@@ -95,14 +95,13 @@ const Sidebar = ({ onLinkClick }) => {
               )}
             </li>
 
+            {/* Sales Link */}
             <li>
               <Link
                 to="/sales"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/sales"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/sales" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg
@@ -119,6 +118,30 @@ const Sidebar = ({ onLinkClick }) => {
                 <span className="ml-3">Sales</span>
               </Link>
             </li>
+
+            {/* Sales Stock Link - New Addition */}
+            <li>
+              <Link
+                to="/sales-stock"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/sales-stock" ? "bg-gray-100 dark:bg-gray-700" : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span className="ml-3">Stok Sales</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
@@ -128,14 +151,13 @@ const Sidebar = ({ onLinkClick }) => {
       <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
         <div className="flex-1 px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
           <ul className="pb-2 space-y-2">
+            {/* Dashboard Link */}
             <li>
               <Link
                 to="/"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg
@@ -149,14 +171,38 @@ const Sidebar = ({ onLinkClick }) => {
                 <span className="ml-3">Dashboard</span>
               </Link>
             </li>
+
+            {/* My Stock Link - New Addition for Sales */}
+            <li>
+              <Link
+                to="/my-stock"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/my-stock" ? "bg-gray-100 dark:bg-gray-700" : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span className="ml-3">Stok Saya</span>
+              </Link>
+            </li>
+
+            {/* Existing Store Management Links */}
             <li>
               <Link
                 to="/stores/add"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/stores/add"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/stores/add" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg
@@ -178,9 +224,7 @@ const Sidebar = ({ onLinkClick }) => {
                 to="/stores"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/stores"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/stores" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg
@@ -202,9 +246,7 @@ const Sidebar = ({ onLinkClick }) => {
                 to="/stores-stock"
                 onClick={onLinkClick}
                 className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
-                  location.pathname === "/stores-stock"
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
+                  location.pathname === "/stores-stock" ? "bg-gray-100 dark:bg-gray-700" : ""
                 }`}
               >
                 <svg

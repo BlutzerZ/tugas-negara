@@ -168,7 +168,7 @@ const AddStore = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!validateForm()) {
             setModalConfig({
                 type: 'error',
@@ -178,15 +178,40 @@ const AddStore = () => {
             setShowModal(true);
             return;
         }
-
+    
         setIsLoading(true);
-
+    
         const uploadData = new FormData();
         Object.keys(formData).forEach((key) => {
             uploadData.append(key, formData[key]);
         });
-
+    
         try {
+            // First, check sales stock availability
+            const salesStockResponse = await fetch(
+                createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, { 
+                    id: localStorage.getItem("user_id") 
+                }),
+                {
+                    method: "GET",
+                    headers: getAuthHeader(),
+                }
+            );
+    
+            if (!salesStockResponse.ok) {
+                throw new Error("Gagal memeriksa stok sales");
+            }
+    
+            const salesStock = await salesStockResponse.json();
+            
+            // Validate if sales has enough stock
+            if (formData.stock_30ml > salesStock.data.stock_30ml ||
+                formData.stock_roll_on > salesStock.data.stock_roll_on ||
+                formData.stock_20ml > salesStock.data.stock_20ml) {
+                throw new Error("Stok sales tidak mencukupi");
+            }
+    
+            // If stock is sufficient, proceed with store creation
             const response = await fetch(
                 createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST),
                 {
@@ -197,23 +222,47 @@ const AddStore = () => {
                     body: uploadData,
                 }
             );
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Gagal menambahkan toko");
             }
-
+    
+            // After successful store creation, update sales stock
+            const updateSalesStock = await fetch(
+                createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, { 
+                    id: localStorage.getItem("user_id") 
+                }),
+                {
+                    method: "PUT",
+                    headers: {
+                        ...getAuthHeader(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        stock_30ml: -formData.stock_30ml,
+                        stock_roll_on: -formData.stock_roll_on,
+                        stock_20ml: -formData.stock_20ml,
+                        action: "reduce"
+                    })
+                }
+            );
+    
+            if (!updateSalesStock.ok) {
+                throw new Error("Berhasil menambah toko namun gagal mengupdate stok sales");
+            }
+    
             setModalConfig({
                 type: 'success',
                 message: 'Toko berhasil ditambahkan! Anda akan dialihkan...',
                 autoClose: true
             });
             setShowModal(true);
-
+    
             setTimeout(() => {
                 navigate("/stores");
             }, 3000);
-
+    
         } catch (error) {
             console.error("Error:", error.message);
             setModalConfig({
@@ -226,6 +275,7 @@ const AddStore = () => {
             setIsLoading(false);
         }
     };
+    
 
     return (
         <>
