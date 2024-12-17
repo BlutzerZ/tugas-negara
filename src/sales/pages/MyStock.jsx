@@ -3,61 +3,89 @@ import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const MyStock = () => {
   const [stockData, setStockData] = useState(null);
+  const [stockHistory, setStockHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockAction, setStockAction] = useState("add");
   const [stockForm, setStockForm] = useState({
-    stock_roll_on: 0,
-    stock_20ml: 0,
-    stock_30ml: 0
+    stock_roll_on: null,
+    stock_20_ml: null,
+    stock_30_ml: null,
   });
 
   useEffect(() => {
-    fetchMyStock();
-  }, []);
+    const fetchMyStock = async () => {
+      try {
+        const response = await fetch(
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
 
-  const fetchMyStock = async () => {
-    try {
-      const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, {
-          id: localStorage.getItem("user_id"),
-        }),
-        {
-          method: "GET",
-          headers: getAuthHeader(),
+        if (!response.ok) {
+          throw new Error("Failed to fetch stock data");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch stock data");
+        const data = await response.json();
+        setStockData(data.data);
+      } catch (error) {
+        console.error("Error fetching stock:", error);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const data = await response.json();
-      setStockData(data.data);
-    } catch (error) {
-      console.error("Error fetching stock:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const fetchMyStockHistory = async () => {
+      try {
+        const response = await fetch(
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_DETAIL),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch stock data");
+        }
+
+        const data = await response.json();
+        setStockHistory(data.data);
+      } catch (error) {
+        console.error("Error fetching stock:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyStock();
+    fetchMyStockHistory();
+  }, []);
 
   const handleStockSubmit = async (e) => {
     e.preventDefault();
     try {
+      const bodyObject = Object.fromEntries(
+        Object.entries(stockForm).map(([key, value]) => {
+          if (stockAction === "add") {
+            return [key, value == null ? 0 : Math.abs(value)];
+          } else {
+            return [key, value == null ? 0 : -1 * Math.abs(value)];
+          }
+        })
+      );
+
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, {
-          id: localStorage.getItem("user_id"),
-        }),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK),
         {
           method: "PUT",
           headers: {
             ...getAuthHeader(),
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            ...stockForm,
-            action: stockAction
-          })
+          body: JSON.stringify(bodyObject),
         }
       );
 
@@ -70,8 +98,8 @@ const MyStock = () => {
       setShowStockModal(false);
       setStockForm({
         stock_roll_on: 0,
-        stock_20ml: 0,
-        stock_30ml: 0
+        stock_20_ml: 0,
+        stock_30_ml: 0,
       });
     } catch (error) {
       console.error("Error updating stock:", error);
@@ -116,7 +144,7 @@ const MyStock = () => {
             Spray 20ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {stockData?.stock_20ml || 0}
+            {stockData?.stock_20_ml || 0}
           </p>
         </div>
 
@@ -125,7 +153,7 @@ const MyStock = () => {
             Spray 30ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {stockData?.stock_30ml || 0}
+            {stockData?.stock_30_ml || 0}
           </p>
         </div>
       </div>
@@ -140,33 +168,64 @@ const MyStock = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Tanggal</th>
-                  <th scope="col" className="px-4 py-3">Tipe</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
+                  <th scope="col" className="px-4 py-3">
+                    Tanggal
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Tipe
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {stockData?.history?.map((item, index) => (
-                  <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {stockHistory?.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">{item.type}</td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_roll_on >= 0 ? "text-green-600" : "text-red-600"}>
+                      <span
+                        className={
+                          item.stock_roll_on >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
                         {item.stock_roll_on}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_20ml >= 0 ? "text-green-600" : "text-red-600"}>
-                        {item.stock_20ml}
+                      <span
+                        className={
+                          item.stock_20_ml >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {item.stock_20_ml}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_30ml >= 0 ? "text-green-600" : "text-red-600"}>
-                        {item.stock_30ml}
+                      <span
+                        className={
+                          item.stock_30_ml >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {item.stock_30_ml}
                       </span>
                     </td>
                   </tr>
@@ -218,30 +277,42 @@ const MyStock = () => {
                   <label className="block mb-2">Roll On</label>
                   <input
                     type="number"
-                    min="0"
                     value={stockForm.stock_roll_on}
-                    onChange={(e) => setStockForm({...stockForm, stock_roll_on: parseInt(e.target.value) || 0})}
-                    className="w-full p-2 border rounded"
+                    onChange={(e) =>
+                      setStockForm({
+                        ...stockForm,
+                        stock_roll_on: parseInt(e.target.value),
+                      })
+                    }
+                    className={`bg-gray-50 border  text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
                   />
                 </div>
                 <div>
                   <label className="block mb-2">20ml</label>
                   <input
                     type="number"
-                    min="0"
-                    value={stockForm.stock_20ml}
-                    onChange={(e) => setStockForm({...stockForm, stock_20ml: parseInt(e.target.value) || 0})}
-                    className="w-full p-2 border rounded"
+                    value={stockForm.stock_20_ml}
+                    onChange={(e) =>
+                      setStockForm({
+                        ...stockForm,
+                        stock_20_ml: parseInt(e.target.value),
+                      })
+                    }
+                    className={`bg-gray-50 border  text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
                   />
                 </div>
                 <div>
                   <label className="block mb-2">30ml</label>
                   <input
                     type="number"
-                    min="0"
-                    value={stockForm.stock_30ml}
-                    onChange={(e) => setStockForm({...stockForm, stock_30ml: parseInt(e.target.value) || 0})}
-                    className="w-full p-2 border rounded"
+                    value={stockForm.stock_30_ml}
+                    onChange={(e) =>
+                      setStockForm({
+                        ...stockForm,
+                        stock_30_ml: parseInt(e.target.value),
+                      })
+                    }
+                    className={`bg-gray-50 border  text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
                   />
                 </div>
               </div>
@@ -249,14 +320,22 @@ const MyStock = () => {
               <div className="mt-6 flex justify-end space-x-4">
                 <button
                   type="button"
-                  onClick={() => setShowStockModal(false)}
-                  className="px-4 py-2 text-gray-500 hover:text-gray-700"
+                  onClick={() => {
+                    setShowStockModal(false);
+                    setStockForm({
+                      stock_roll_on: null,
+                      stock_20_ml: null,
+                      stock_30_ml: null,
+                    });
+                  }}
+                  className="text-white bg-primary-900 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5"
                 >
                   Batal
                 </button>
+
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary-700 text-white rounded hover:bg-primary-800"
+                  className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5"
                 >
                   Simpan
                 </button>

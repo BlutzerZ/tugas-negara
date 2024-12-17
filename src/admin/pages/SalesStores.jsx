@@ -5,21 +5,24 @@ import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Import leaflet icons
-import L from 'leaflet';
+import L from "leaflet";
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
 // Fungsi untuk mendapatkan URL gambar
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
-  if (imagePath.startsWith('http')) {
+  if (imagePath.startsWith("http")) {
     return imagePath;
   }
-  return `${import.meta.env.VITE_API_BASE_URL}/${imagePath.replace(/^\//, '')}`;
+  return `${import.meta.env.VITE_API_BASE_URL}/${imagePath.replace(/^\//, "")}`;
 };
 
 // Komponen untuk mengatur center peta
@@ -42,7 +45,7 @@ const SalesStores = () => {
       try {
         const response = await fetch(
           createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id }) +
-          "?order=asc&include_deleted=false",
+            "?order=asc&include_deleted=false",
           {
             method: "GET",
             headers: getAuthHeader(),
@@ -91,7 +94,9 @@ const SalesStores = () => {
 
   const StoreDetail = ({ store, onClose }) => {
     const locMatch = store.loc?.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
-    const mapCenter = locMatch ? [parseFloat(locMatch[1]), parseFloat(locMatch[2])] : [-6.2, 106.816666];
+    const mapCenter = locMatch
+      ? [parseFloat(locMatch[1]), parseFloat(locMatch[2])]
+      : [-6.2, 106.816666];
     const imageUrl = getImageUrl(store.image);
 
     console.log("Store image URL:", imageUrl);
@@ -107,39 +112,59 @@ const SalesStores = () => {
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
 
           <div className="space-y-4">
-            {imageUrl && (
-              <div className="store-image-container">
-                <img
-                  src={imageUrl}
-                  alt={store.name}
-                  className="store-image"
-                  onError={(e) => {
-                    console.error('Error loading image:', e);
-                    e.target.parentElement.innerHTML = '<div class="store-image-error">Gambar tidak tersedia</div>';
-                  }}
-                />
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Stok Produk:
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {store.products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-gray-100 dark:bg-gray-700 p-2 rounded"
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      {product.name}
+                    </div>
+                    <div className="text-gray-500 dark:text-gray-400">
+                      {product.stock}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Alamat:</p>
-              <p className="text-gray-900 dark:text-white">{store.address}</p>
             </div>
-
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Nomor Telepon:</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Nomor Telepon:
+              </p>
               <p className="text-gray-900 dark:text-white">{store.num}</p>
             </div>
-
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Lokasi:</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Alamat:
+              </p>
+              <p className="text-gray-900 dark:text-white">{store.address}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Lokasi:
+              </p>
               <div style={{ height: "300px" }}>
                 <MapContainer
                   center={mapCenter}
@@ -159,21 +184,20 @@ const SalesStores = () => {
               </div>
             </div>
 
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Stok Produk:</p>
-              <div className="grid grid-cols-3 gap-2">
-                {store.products.map((product) => (
-                  <div key={product.id} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                    <div className="font-medium text-gray-900 dark:text-white">
-                      {product.name}
-                    </div>
-                    <div className="text-gray-500 dark:text-gray-400">
-                      {product.stock}
-                    </div>
-                  </div>
-                ))}
+            {imageUrl && (
+              <div className="store-image-container">
+                <img
+                  src={imageUrl}
+                  alt={store.name}
+                  className="store-image"
+                  onError={(e) => {
+                    console.error("Error loading image:", e);
+                    e.target.parentElement.innerHTML =
+                      '<div class="store-image-error">Gambar tidak tersedia</div>';
+                  }}
+                />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -224,7 +248,9 @@ const SalesStores = () => {
           </div>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <p className="text-center col-span-full text-gray-500 dark:text-gray-400">Loading...</p>
+          <p className="text-center col-span-full text-gray-500 dark:text-gray-400">
+            Loading...
+          </p>
         </div>
       </>
     );
@@ -286,7 +312,7 @@ const SalesStores = () => {
               onClick={() => openStoreDetail(store)}
             >
               <div className="flex flex-col h-full">
-                {getImageUrl(store.image) && (
+                {/* {getImageUrl(store.image) && (
                   <div className="mb-4 store-image-container">
                     <img
                       src={getImageUrl(store.image)}
@@ -298,8 +324,8 @@ const SalesStores = () => {
                       }}
                     />
                   </div>
-                )}
-                
+                )} */}
+
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {store.name}
                 </h3>
@@ -312,7 +338,10 @@ const SalesStores = () => {
                 <div className="mt-auto">
                   <div className="grid grid-cols-3 gap-2 text-sm">
                     {store.products.map((product) => (
-                      <div key={product.id} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                      <div
+                        key={product.id}
+                        className="bg-gray-100 dark:bg-gray-700 p-2 rounded"
+                      >
                         <div className="font-medium text-gray-900 dark:text-white">
                           {product.name}
                         </div>

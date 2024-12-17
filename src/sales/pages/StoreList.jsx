@@ -24,8 +24,8 @@ const StoreList = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json(); // Parsing JSON dari response
-        setStores(data.data); // Asumsikan API mengembalikan array store
+        const data = await response.json();
+        setStores(data.data);
         console.log(data);
       } catch (error) {
         console.error("Failed to fetch stores:", error);
@@ -33,13 +33,7 @@ const StoreList = () => {
     };
 
     fetchStores();
-  }, [searchTerm]); // [] memastikan API hanya dipanggil sekali saat komponen di-mount
-
-  const filteredStores = stores.filter(
-    (store) =>
-      store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      store.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  }, [searchTerm]);
 
   return (
     <>
@@ -88,7 +82,7 @@ const StoreList = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {filteredStores.map((store) => (
+                  {stores.map((store) => (
                     <tr
                       onClick={() => navigate(`/stores/${store.id}/edit`)}
                       key={store.id}

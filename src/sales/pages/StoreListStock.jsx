@@ -38,12 +38,6 @@ const StoreListStock = () => {
     fetchStores();
   }, [searchTerm]);
 
-  const filteredStores = stores.filter(
-    (store) =>
-      store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      store.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <>
       {/* Header Section */}
@@ -91,7 +85,7 @@ const StoreListStock = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {filteredStores.map((store) => (
+                  {stores.map((store) => (
                     <tr
                       onClick={() => {
                         navigate(`/stores/${store.id}/edit-stock`);
