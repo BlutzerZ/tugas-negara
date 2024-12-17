@@ -1,142 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const EditSalesStock = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // Data statis untuk contoh
   const [formData, setFormData] = useState({
-    stock_roll_on: 0,
-    stock_20ml: 0,
-    stock_30ml: 0
+    stock_roll_on: 100,
+    stock_20ml: 150,
+    stock_30ml: 200
   });
 
-  useEffect(() => {
-    const fetchSalesStock = async () => {
-      try {
-        const response = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.SALES.STOCK + `/${id}`),
-          {
-            method: "GET",
-            headers: getAuthHeader(),
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch sales stock");
-        const data = await response.json();
-        setFormData(data.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchSalesStock();
-  }, [id]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    try {
-        // Get current store stock
-        const currentStockResponse = await fetch(
-            createApiUrl(API_CONFIG.ENDPOINTS.STORES.DETAIL, { id: store_id }),
-            {
-                method: "GET",
-                headers: getAuthHeader(),
-            }
-        );
-
-        if (!currentStockResponse.ok) {
-            throw new Error("Gagal mendapatkan data stok toko");
-        }
-
-        const currentStock = await currentStockResponse.json();
-        
-        // Calculate stock difference
-        const stockDifference = {
-            stock_30ml: formData.stock_30ml - currentStock.data.stock_30ml,
-            stock_roll_on: formData.stock_roll_on - currentStock.data.stock_roll_on,
-            stock_20ml: formData.stock_20ml - currentStock.data.stock_20ml
-        };
-
-        // If adding stock, check sales stock availability
-        if (stockAction === "add") {
-            const salesStockResponse = await fetch(
-                createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, { 
-                    id: localStorage.getItem("user_id") 
-                }),
-                {
-                    method: "GET",
-                    headers: getAuthHeader(),
-                }
-            );
-
-            if (!salesStockResponse.ok) {
-                throw new Error("Gagal memeriksa stok sales");
-            }
-
-            const salesStock = await salesStockResponse.json();
-
-            // Validate if sales has enough stock
-            if (stockDifference.stock_30ml > salesStock.data.stock_30ml ||
-                stockDifference.stock_roll_on > salesStock.data.stock_roll_on ||
-                stockDifference.stock_20ml > salesStock.data.stock_20ml) {
-                throw new Error("Stok sales tidak mencukupi");
-            }
-        }
-
-        // Update store stock
-        const response = await fetch(
-            createApiUrl(API_CONFIG.ENDPOINTS.STORES.DETAIL, { id: store_id }),
-            {
-                method: "PUT",
-                headers: {
-                    ...getAuthHeader(),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    stock_action: stockAction
-                })
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Gagal mengupdate stok toko");
-        }
-
-        // Update sales stock if adding to store stock
-        if (stockAction === "add") {
-            const updateSalesStock = await fetch(
-                createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, { 
-                    id: localStorage.getItem("user_id") 
-                }),
-                {
-                    method: "PUT",
-                    headers: {
-                        ...getAuthHeader(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        stock_30ml: -stockDifference.stock_30ml,
-                        stock_roll_on: -stockDifference.stock_roll_on,
-                        stock_20ml: -stockDifference.stock_20ml,
-                        action: "reduce"
-                    })
-                }
-            );
-
-            if (!updateSalesStock.ok) {
-                throw new Error("Berhasil update stok toko namun gagal mengupdate stok sales");
-            }
-        }
-
-        navigate(0);
-    } catch (error) {
-        console.error("Error:", error.message);
-        alert(`Error: ${error.message}`);
-    }
-};
-
+    // Di sini nantinya akan ada logika untuk update ke API
+    console.log("Data yang akan diupdate:", formData);
+    
+    // Redirect kembali ke halaman sales stock
+    navigate("/sales-stock");
+  };
 
   return (
     <div className="p-4">
