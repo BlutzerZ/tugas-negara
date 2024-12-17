@@ -9,7 +9,6 @@ import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SalesList = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [sales, setSales] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -26,6 +25,7 @@ const SalesList = () => {
         url.searchParams.append("include_deleted", "false");
         url.searchParams.append("role_type", "sales");
         url.searchParams.append("sort_by", "name");
+        url.searchParams.append("search_query", searchTerm);
 
         if (queryValue) {
           url.searchParams.append("region", queryValue);
@@ -51,33 +51,7 @@ const SalesList = () => {
     };
 
     fetchStores();
-  }, [queryValue]);
-
-  const calculateTotalStocks = (stores) => {
-    return stores.reduce(
-      (acc, store) => ({
-        stock_30ml: acc.stock_30ml + store.stock_30ml,
-        stock_roll_on: acc.stock_roll_on + store.stock_roll_on,
-        stock_20ml: acc.stock_20ml + store.stock_20ml,
-      }),
-      {
-        stock_30ml: 0,
-        stock_roll_on: 0,
-        stock_20ml: 0,
-      }
-    );
-  };
-
-  const filteredSales = sales.filter(
-    (sale) =>
-      sale.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.stores.some(
-        (store) =>
-          store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          store.address.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  }, [queryValue, searchTerm]);
 
   return (
     <>
@@ -132,7 +106,7 @@ const SalesList = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {filteredSales.map((salesPerson) => {
+                  {sales.map((salesPerson) => {
                     return (
                       <tr
                         onClick={() => navigate(`/sales/${salesPerson.id}`)}
