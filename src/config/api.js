@@ -17,6 +17,7 @@ export const API_CONFIG = {
       DETAIL: import.meta.env.VITE_API_STORE_DETAIL,
     },
     INFO: import.meta.env.VITE_API_INFO,
+    USERSTOCK: import.meta.env.VITE_API_SALES_STOCK,
   },
   HEADERS: {
     "Content-Type": import.meta.env.VITE_API_CONTENT_TYPE,
