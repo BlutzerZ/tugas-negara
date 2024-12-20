@@ -257,36 +257,37 @@ const EditStoreStock = () => {
       </div>
 
       {/* Stock Action Selection */}
-      <div className="p-4">
-        <div className="flex items-center mb-4">
-          <span className="mr-4 text-sm font-medium text-gray-900 dark:text-white">
-            Pilih Aksi Stok:
-          </span>
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="stock-action"
-                value="add"
-                checked={stockAction === "add"}
-                onChange={() => setStockAction("add")}
-                className="mr-2"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Tambah Stok</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="stock-action"
-                value="reduce"
-                checked={stockAction === "reduce"}
-                onChange={() => setStockAction("reduce")}
-                className="mr-2"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Kurangi Stok</span>
-            </label>
-          </div>
-        </div>
+<div className="p-4">
+  <div className="flex items-center mb-4">
+    <span className="mr-4 text-sm font-medium text-gray-900 dark:text-white">
+      Pilih Aksi Stok:
+    </span>
+    <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-md">
+      <button
+        type="button"
+        onClick={() => setStockAction("add")}
+        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+          stockAction === "add"
+            ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+        }`}
+      >
+        Tambah Stok
+      </button>
+      <button
+        type="button"
+        onClick={() => setStockAction("reduce")}
+        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+          stockAction === "reduce"
+            ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+        }`}
+      >
+        Kurangi Stok
+      </button>
+    </div>
+  </div>
+
 
         {/* Stock Update Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
