@@ -3,6 +3,21 @@ import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
 
 const UserProfile = () => {
   const [userData, setUserData] = useState({});
+  const [profileImage, setProfileImage] = useState(null);
+  
+  const regions = [
+    "Jakarta",
+    "Banten",
+    "Bandung",
+    "Bogor",
+    "Cianjur",
+    "Garut",
+    "Karawang",
+    "Subang",
+    "Sukabumi",
+    "Lampung",
+    "Palembang",
+  ];
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -32,6 +47,22 @@ const UserProfile = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      // Optional: Show preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUserData(prev => ({
+          ...prev,
+          profileImageUrl: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated user data:", userData);
@@ -47,6 +78,32 @@ const UserProfile = () => {
           </h1>
         </div>
         <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+          {/* Profile Picture */}
+          <div className="mb-6 text-center">
+            <div className="mb-4">
+              <img
+                src={userData.profileImageUrl || "https://via.placeholder.com/150"}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mx-auto mb-2 object-cover"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="profile-picture"
+                className="cursor-pointer bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              >
+                <span>Ubah Foto Profil</span>
+                <input
+                  type="file"
+                  id="profile-picture"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+          </div>
+
           <div className="grid gap-4 mb-4">
             <div>
               <label
@@ -106,64 +163,23 @@ const UserProfile = () => {
               >
                 Wilayah
               </label>
-              <input
-                type="text"
+              <select
                 id="region"
                 name="region"
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 value={userData.region}
                 onChange={handleChange}
                 required
-              />
+              >
+                <option value="">--- Pilih Wilayah ---</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-
-          {/* <div className="mb-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Ubah Password
-            </h3>
-            <div className="grid gap-4">
-              <div>
-                <label htmlFor="currentPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password Saat Ini
-                </label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  name="currentPassword"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  value={userData.currentPassword}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="newPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password Baru
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  value={userData.newPassword}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Konfirmasi Password Baru
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  value={userData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div> */}
 
           <button
             type="submit"
