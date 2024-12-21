@@ -10,14 +10,14 @@ const MyStock = () => {
   const [stockAction, setStockAction] = useState("add");
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    type: 'success',
-    message: '',
-    autoClose: true
+    type: "success",
+    message: "",
+    autoClose: true,
   });
   const [stockForm, setStockForm] = useState({
-    stock_roll_on: 0,
-    stock_20_ml: 0,
-    stock_30_ml: 0,
+    stock_roll_on: null,
+    stock_20_ml: null,
+    stock_30_ml: null,
   });
 
   const fetchMyStock = async () => {
@@ -39,9 +39,9 @@ const MyStock = () => {
     } catch (error) {
       console.error("Error fetching stock:", error);
       setModalConfig({
-        type: 'error',
-        message: 'Gagal mengambil data stok',
-        autoClose: false
+        type: "error",
+        message: "Gagal mengambil data stok",
+        autoClose: false,
       });
       setShowModal(true);
     }
@@ -66,9 +66,9 @@ const MyStock = () => {
     } catch (error) {
       console.error("Error fetching stock history:", error);
       setModalConfig({
-        type: 'error',
-        message: 'Gagal mengambil riwayat stok',
-        autoClose: false
+        type: "error",
+        message: "Gagal mengambil riwayat stok",
+        autoClose: false,
       });
       setShowModal(true);
     } finally {
@@ -84,12 +84,18 @@ const MyStock = () => {
   const handleStockSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setShowStockModal(false);
 
     try {
-      const bodyObject = {
-        ...stockForm,
-        action: stockAction
-      };
+      const bodyObject = Object.fromEntries(
+        Object.entries(stockForm).map(([key, value]) => {
+          if (stockAction === "add") {
+            return [key, value == null ? 0 : Math.abs(value)];
+          } else {
+            return [key, value == null ? 0 : -1 * Math.abs(value)];
+          }
+        })
+      );
 
       const response = await fetch(
         createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK),
@@ -108,28 +114,27 @@ const MyStock = () => {
       }
 
       setModalConfig({
-        type: 'success',
-        message: 'Stok berhasil diperbarui',
-        autoClose: true
+        type: "success",
+        message: "Stok berhasil diperbarui",
+        autoClose: true,
       });
       setShowModal(true);
 
       // Refresh data
       await fetchMyStock();
       await fetchMyStockHistory();
-      
-      setShowStockModal(false);
+
       setStockForm({
-        stock_roll_on: 0,
-        stock_20_ml: 0,
-        stock_30_ml: 0,
+        stock_roll_on: null,
+        stock_20_ml: null,
+        stock_30_ml: null,
       });
     } catch (error) {
       console.error("Error updating stock:", error);
       setModalConfig({
-        type: 'error',
-        message: 'Gagal memperbarui stok',
-        autoClose: false
+        type: "error",
+        message: "Gagal memperbarui stok",
+        autoClose: false,
       });
       setShowModal(true);
     } finally {
@@ -140,9 +145,9 @@ const MyStock = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const numValue = parseInt(value) || 0;
-    setStockForm(prev => ({
+    setStockForm((prev) => ({
       ...prev,
-      [name]: Math.max(0, numValue) // Prevent negative values
+      [name]: Math.max(0, numValue), // Prevent negative values
     }));
   };
 
@@ -214,32 +219,63 @@ const MyStock = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Tanggal</th>
-                  <th scope="col" className="px-4 py-3">Tipe</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
+                  <th scope="col" className="px-4 py-3">
+                    Tanggal
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Tipe
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {stockHistory?.map((item, index) => (
-                  <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">{item.type}</td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_roll_on >= 0 ? "text-green-600" : "text-red-600"}>
+                      <span
+                        className={
+                          item.stock_roll_on >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
                         {item.stock_roll_on}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_20_ml >= 0 ? "text-green-600" : "text-red-600"}>
+                      <span
+                        className={
+                          item.stock_20_ml >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
                         {item.stock_20_ml}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={item.stock_30_ml >= 0 ? "text-green-600" : "text-red-600"}>
+                      <span
+                        className={
+                          item.stock_30_ml >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
                         {item.stock_30_ml}
                       </span>
                     </td>
@@ -260,7 +296,9 @@ const MyStock = () => {
             </h3>
             <form onSubmit={handleStockSubmit}>
               <div className="mb-4">
-                <label className="block mb-2 text-gray-700 dark:text-gray-300">Tipe Update</label>
+                <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                  Tipe Update
+                </label>
                 <div className="flex space-x-4">
                   <label className="flex items-center">
                     <input
@@ -271,7 +309,9 @@ const MyStock = () => {
                       onChange={(e) => setStockAction(e.target.value)}
                       className="mr-2"
                     />
-                    <span className="text-gray-700 dark:text-gray-300">Tambah</span>
+                    <span className="text-gray-700 dark:text-gray-300">
+                      Tambah
+                    </span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -282,14 +322,18 @@ const MyStock = () => {
                       onChange={(e) => setStockAction(e.target.value)}
                       className="mr-2"
                     />
-                    <span className="text-gray-700 dark:text-gray-300">Kurang</span>
+                    <span className="text-gray-700 dark:text-gray-300">
+                      Kurang
+                    </span>
                   </label>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300">Roll On</label>
+                  <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                    Roll On
+                  </label>
                   <input
                     type="number"
                     name="stock_roll_on"
@@ -300,7 +344,9 @@ const MyStock = () => {
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300">20ml</label>
+                  <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                    20ml
+                  </label>
                   <input
                     type="number"
                     name="stock_20_ml"
@@ -311,7 +357,9 @@ const MyStock = () => {
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300">30ml</label>
+                  <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                    30ml
+                  </label>
                   <input
                     type="number"
                     name="stock_30_ml"
@@ -343,7 +391,7 @@ const MyStock = () => {
                   disabled={isLoading}
                   className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
-                  {isLoading ? 'Memproses...' : 'Simpan'}
+                  {isLoading ? "Memproses..." : "Simpan"}
                 </button>
               </div>
             </form>

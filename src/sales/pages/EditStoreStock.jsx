@@ -12,9 +12,9 @@ const EditStoreStock = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
-    type: 'success',
-    message: '',
-    autoClose: true
+    type: "success",
+    message: "",
+    autoClose: true,
   });
 
   // State untuk return
@@ -23,7 +23,7 @@ const EditStoreStock = () => {
     stock_roll_on: 0,
     stock_20_ml: 0,
     stock_30_ml: 0,
-    notes: ""
+    notes: "",
   });
 
   useEffect(() => {
@@ -54,9 +54,9 @@ const EditStoreStock = () => {
       } catch (error) {
         console.error("Failed to fetch stores:", error);
         setModalConfig({
-          type: 'error',
-          message: 'Gagal mengambil data toko',
-          autoClose: false
+          type: "error",
+          message: "Gagal mengambil data toko",
+          autoClose: false,
         });
         setShowModal(true);
       }
@@ -118,22 +118,21 @@ const EditStoreStock = () => {
       }
 
       setModalConfig({
-        type: 'success',
-        message: 'Stok berhasil diupdate!',
-        autoClose: true
+        type: "success",
+        message: "Stok berhasil diupdate!",
+        autoClose: true,
       });
       setShowModal(true);
 
       setTimeout(() => {
         navigate(0);
       }, 2000);
-
     } catch (error) {
       console.error("Error:", error.message);
       setModalConfig({
-        type: 'error',
+        type: "error",
         message: `Error: ${error.message}`,
-        autoClose: false
+        autoClose: false,
       });
       setShowModal(true);
     } finally {
@@ -148,7 +147,11 @@ const EditStoreStock = () => {
 
     try {
       // Validasi input
-      if (returnForm.stock_roll_on < 0 || returnForm.stock_20_ml < 0 || returnForm.stock_30_ml < 0) {
+      if (
+        returnForm.stock_roll_on < 0 ||
+        returnForm.stock_20_ml < 0 ||
+        returnForm.stock_30_ml < 0
+      ) {
         throw new Error("Jumlah return tidak boleh negatif");
       }
 
@@ -160,13 +163,13 @@ const EditStoreStock = () => {
       // Untuk sementara menggunakan console.log
       console.log("Return data:", {
         store_id,
-        ...returnForm
+        ...returnForm,
       });
 
       setModalConfig({
-        type: 'success',
-        message: 'Return berhasil dicatat!',
-        autoClose: true
+        type: "success",
+        message: "Return berhasil dicatat!",
+        autoClose: true,
       });
       setShowModal(true);
       setShowReturnModal(false);
@@ -176,15 +179,14 @@ const EditStoreStock = () => {
         stock_roll_on: 0,
         stock_20_ml: 0,
         stock_30_ml: 0,
-        notes: ""
+        notes: "",
       });
-
     } catch (error) {
       console.error("Error:", error.message);
       setModalConfig({
-        type: 'error',
+        type: "error",
         message: error.message,
-        autoClose: false
+        autoClose: false,
       });
       setShowModal(true);
     } finally {
@@ -192,11 +194,12 @@ const EditStoreStock = () => {
     }
   };
 
-  if (!store) return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-    </div>
-  );
+  if (!store)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      </div>
+    );
 
   return (
     <>
@@ -245,7 +248,10 @@ const EditStoreStock = () => {
       {/* Current Stock Display */}
       <div className="p-4 grid grid-cols-3 gap-2 text-sm">
         {store.products.map((product) => (
-          <div key={product.id} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
+          <div
+            key={product.id}
+            className="bg-gray-100 dark:bg-gray-700 p-2 rounded"
+          >
             <div className="font-medium text-gray-900 dark:text-white">
               {product.name}
             </div>
@@ -257,43 +263,62 @@ const EditStoreStock = () => {
       </div>
 
       {/* Stock Action Selection */}
-<div className="p-4">
-  <div className="flex items-center mb-4">
-    <span className="mr-4 text-sm font-medium text-gray-900 dark:text-white">
-      Pilih Aksi Stok:
-    </span>
-    <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-md">
-      <button
-        type="button"
-        onClick={() => setStockAction("add")}
-        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-          stockAction === "add"
-            ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-        }`}
-      >
-        Tambah Stok
-      </button>
-      <button
-        type="button"
-        onClick={() => setStockAction("reduce")}
-        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-          stockAction === "reduce"
-            ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-        }`}
-      >
-        Kurangi Stok
-      </button>
-    </div>
-  </div>
-
+      <div className="p-4">
+        <div className="flex items-center mb-4">
+          <span className="mr-4 text-sm font-medium text-gray-900 dark:text-white">
+            Pilih Aksi Stok:
+          </span>
+          <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-md">
+            <button
+              type="button"
+              onClick={() => setStockAction("add")}
+              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                stockAction === "add"
+                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              }`}
+            >
+              Tambah Stok
+            </button>
+            <button
+              type="button"
+              onClick={() => setStockAction("reduce")}
+              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                stockAction === "reduce"
+                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              }`}
+            >
+              Stok Terjual
+            </button>
+            <button
+              type="button"
+              onClick={() => setStockAction("return")}
+              className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                stockAction === "return"
+                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              }`}
+            >
+              Retrun Stok
+            </button>
+          </div>
+        </div>
 
         {/* Stock Update Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              {stockAction === "add" ? "Tambah" : "Kurangi"} Stok Toko
+              {(() => {
+                if (stockAction === "add") {
+                  return "Tambah ";
+                } else if (stockAction === "reduce") {
+                  return "Kurangi ";
+                } else {
+                  return "Return ";
+                }
+              })()}
+              Stok Toko
             </h3>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div>
@@ -338,6 +363,22 @@ const EditStoreStock = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 />
               </div>
+              {stockAction === "return" && (
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Catatan
+                  </label>
+                  <textarea
+                    value={returnForm.notes}
+                    onChange={(e) =>
+                      setReturnForm({ ...returnForm, notes: e.target.value })
+                    }
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    rows="3"
+                    placeholder="Masukkan alasan return..."
+                  ></textarea>
+                </div>
+              )}
             </div>
           </div>
 
@@ -348,14 +389,19 @@ const EditStoreStock = () => {
               disabled={isLoading}
               className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              {isLoading ? "Memproses..." : (stockAction === "add" ? "Tambah" : "Kurangi") + " Stok"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowReturnModal(true)}
-              className="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-            >
-              Return Parfum
+              {(() => {
+                if (isLoading) {
+                  return "Memproses ";
+                } else {
+                  if (stockAction === "add") {
+                    return "Tambah Stok";
+                  } else if (stockAction === "reduce") {
+                    return "Kurangi Stock";
+                  } else {
+                    return "Return Stok";
+                  }
+                }
+              })()}
             </button>
             <Link
               to="/stores-stock"
@@ -368,7 +414,7 @@ const EditStoreStock = () => {
       </div>
 
       {/* Return Modal */}
-      {showReturnModal && (
+      {/* {showReturnModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
             <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">
@@ -384,7 +430,12 @@ const EditStoreStock = () => {
                     type="number"
                     min="0"
                     value={returnForm.stock_roll_on}
-                    onChange={(e) => setReturnForm({...returnForm, stock_roll_on: parseInt(e.target.value) || 0})}
+                    onChange={(e) =>
+                      setReturnForm({
+                        ...returnForm,
+                        stock_roll_on: parseInt(e.target.value) || 0,
+                      })
+                    }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   />
                 </div>
@@ -396,7 +447,12 @@ const EditStoreStock = () => {
                     type="number"
                     min="0"
                     value={returnForm.stock_20_ml}
-                    onChange={(e) => setReturnForm({...returnForm, stock_20_ml: parseInt(e.target.value) || 0})}
+                    onChange={(e) =>
+                      setReturnForm({
+                        ...returnForm,
+                        stock_20_ml: parseInt(e.target.value) || 0,
+                      })
+                    }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   />
                 </div>
@@ -408,7 +464,12 @@ const EditStoreStock = () => {
                     type="number"
                     min="0"
                     value={returnForm.stock_30_ml}
-                    onChange={(e) => setReturnForm({...returnForm, stock_30_ml: parseInt(e.target.value) || 0})}
+                    onChange={(e) =>
+                      setReturnForm({
+                        ...returnForm,
+                        stock_30_ml: parseInt(e.target.value) || 0,
+                      })
+                    }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   />
                 </div>
@@ -418,7 +479,9 @@ const EditStoreStock = () => {
                   </label>
                   <textarea
                     value={returnForm.notes}
-                    onChange={(e) => setReturnForm({...returnForm, notes: e.target.value})}
+                    onChange={(e) =>
+                      setReturnForm({ ...returnForm, notes: e.target.value })
+                    }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     rows="3"
                     placeholder="Masukkan alasan return..."
@@ -445,7 +508,7 @@ const EditStoreStock = () => {
             </form>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Success/Error Modal */}
       <SuccessModal

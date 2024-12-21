@@ -1,58 +1,52 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SalesStock = () => {
   // Data statis untuk sales stock
-  const [salesStock, setSalesStock] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      area: "Jakarta",
-      stock_roll_on: 100,
-      stock_20ml: 150,
-      stock_30ml: 200
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      area: "Bandung",
-      stock_roll_on: 80,
-      stock_20ml: 120,
-      stock_30ml: 160
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      area: "Surabaya",
-      stock_roll_on: 90,
-      stock_20ml: 130,
-      stock_30ml: 180
-    },
-    {
-      id: 4,
-      name: "Sarah Wilson",
-      area: "Medan",
-      stock_roll_on: 70,
-      stock_20ml: 110,
-      stock_30ml: 140
-    },
-    {
-      id: 5,
-      name: "David Brown",
-      area: "Bali",
-      stock_roll_on: 85,
-      stock_20ml: 125,
-      stock_30ml: 170
-    }
-  ]);
+  const [salesStock, setSalesStock] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    const fetchUserStock = async () => {
+      try {
+        const response = await fetch(
+          createApiUrl(
+            API_CONFIG.ENDPOINTS.USERSTOCK +
+              `?order=asc&include_deleted=false&search_query=${searchTerm}`
+          ),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch stock data");
+        }
+
+        const data = await response.json();
+        console.log(data.data);
+        setSalesStock(data.data);
+      } catch (error) {
+        console.error("Error fetching stock:", error);
+      } finally {
+      }
+    };
+
+    fetchUserStock();
+    console.log("disini");
+  }, [searchTerm]);
+
+  console.log("disini2");
+
   // Filter sales berdasarkan pencarian (nama atau area)
-  const filteredSales = salesStock.filter(sale =>
-    sale.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sale.area.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredSales = salesStock.filter(
+  //   (sale) =>
+  //     sale.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     sale.area.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <>
@@ -77,8 +71,8 @@ const SalesStock = () => {
           </div>
         </div>
       </div>
-{/* Summary Cards */}
-<div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+      {/* Summary Cards */}
+      <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             Total Sales
@@ -123,46 +117,69 @@ const SalesStock = () => {
               <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Nama Sales
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Area
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Roll On
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       20ml
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       30ml
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Total Stok
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {filteredSales.map((sales) => (
-                    <tr key={sales.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                  {salesStock?.users.map((sales) => (
+                    <tr
+                      key={sales.id}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
                       <td className="p-4 text-base font-medium text-gray-900 dark:text-white">
                         {sales.name}
                       </td>
                       <td className="p-4 text-base font-medium text-gray-900 dark:text-white">
-                        {sales.area}
+                        {sales.region}
                       </td>
                       <td className="p-4 text-base text-gray-900 dark:text-white">
                         {sales.stock_roll_on}
                       </td>
                       <td className="p-4 text-base text-gray-900 dark:text-white">
-                        {sales.stock_20ml}
+                        {sales.stock_20_ml}
                       </td>
                       <td className="p-4 text-base text-gray-900 dark:text-white">
-                        {sales.stock_30ml}
+                        {sales.stock_30_ml}
                       </td>
                       <td className="p-4 text-base text-gray-900 dark:text-white">
-                        {sales.stock_roll_on + sales.stock_20ml + sales.stock_30ml}
+                        {sales.stock_roll_on +
+                          sales.stock_20_ml +
+                          sales.stock_30_ml}
                       </td>
                     </tr>
                   ))}
@@ -173,7 +190,44 @@ const SalesStock = () => {
         </div>
       </div>
 
-      
+      {/* Summary Cards */}
+      <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total Sales
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.length}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total Roll On
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_roll_on, 0)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total 20ml
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_20ml, 0)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total 30ml
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_30ml, 0)}
+          </p>
+        </div>
+      </div>
     </>
   );
 };
