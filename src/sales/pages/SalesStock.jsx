@@ -71,7 +71,44 @@ const SalesStock = () => {
           </div>
         </div>
       </div>
+      {/* Summary Cards */}
+      <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total Sales
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.length}
+          </p>
+        </div>
 
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total Roll On
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_roll_on, 0)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total 20ml
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_20ml, 0)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            Total 30ml
+          </h2>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {salesStock.reduce((sum, sales) => sum + sales.stock_30ml, 0)}
+          </p>
+        </div>
+      </div>
       {/* Table Section */}
       <div className="flex flex-col">
         <div className="overflow-x-auto">
@@ -160,7 +197,7 @@ const SalesStock = () => {
             Total Sales
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesStock?.total_sales}
+            {salesStock.length}
           </p>
         </div>
 
@@ -169,7 +206,7 @@ const SalesStock = () => {
             Total Roll On
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesStock?.total_roll_on}
+            {salesStock.reduce((sum, sales) => sum + sales.stock_roll_on, 0)}
           </p>
         </div>
 
@@ -178,7 +215,7 @@ const SalesStock = () => {
             Total 20ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesStock?.total_20_ml}
+            {salesStock.reduce((sum, sales) => sum + sales.stock_20ml, 0)}
           </p>
         </div>
 
@@ -187,7 +224,7 @@ const SalesStock = () => {
             Total 30ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesStock?.total_30_ml}
+            {salesStock.reduce((sum, sales) => sum + sales.stock_30ml, 0)}
           </p>
         </div>
       </div>
