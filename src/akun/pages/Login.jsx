@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 import SuccessModal from "../../admin/components/SuccessModal";
+
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [modalConfig, setModalConfig] = useState({
         type: 'success',
@@ -162,7 +164,7 @@ const Login = () => {
                                 Kata Sandi Anda
                             </label>
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 id="password"
                                 name="password"
                                 value={password}
@@ -176,18 +178,20 @@ const Login = () => {
                         <div className="flex items-start">
                             <div className="flex items-center h-5">
                                 <input
-                                    id="remember"
-                                    name="remember"
+                                    id="showPassword"
+                                    name="showPassword"
                                     type="checkbox"
+                                    checked={showPassword}
+                                    onChange={(e) => setShowPassword(e.target.checked)}
                                     className="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
                                 />
                             </div>
                             <div className="ml-3 text-sm">
                                 <label
-                                    htmlFor="remember"
+                                    htmlFor="showPassword"
                                     className="font-medium text-gray-900 dark:text-white"
                                 >
-                                    Ingat Saya
+                                    Tampilkan Password
                                 </label>
                             </div>
                             <a

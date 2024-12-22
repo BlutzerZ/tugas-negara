@@ -6,32 +6,67 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
-  const [profilePhoto, setprofilePhoto] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState(null);
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE),
+        {
+          method: "GET",
+          headers: getAuthHeader(),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile data");
+      }
+      
+      const data = await response.json();
+      setProfile(data.data);
+      
+      if (data.data.image) {
+        const imageUrl = `${API_CONFIG.BASE_URL}/${data.data.image}`;
+        setProfilePhoto(imageUrl);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetcData = async () => {
-      try {
-        const responseUser = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE),
-          {
-            method: "GET",
-            headers: getAuthHeader(),
-          }
-        );
+    fetchProfileData();
 
-        if (!responseUser.ok) {
-          const errorData = await responseUser.json();
-          throw new Error(errorData.message || "Failed to get personal user");
-        }
-        const data = await responseUser.json();
-        setProfile(data.data);
-        setprofilePhoto(`${API_CONFIG.BASE_URL}/${data.data.image}`);
-      } catch (error) {
-        console.error("Error:", error.message);
+    // Event listener untuk update foto profil
+    const handleProfileUpdate = () => {
+      const savedProfileImage = localStorage.getItem('profileImage');
+      if (savedProfileImage) {
+        setProfilePhoto(savedProfileImage);
       }
     };
 
-    fetcData();
+    // Event listener untuk update data user
+    const handleUserDataUpdate = (event) => {
+      setProfile(prev => ({
+        ...prev,
+        name: event.detail.name,
+        email: event.detail.email
+      }));
+    };
+
+    window.addEventListener('profileImageUpdated', handleProfileUpdate);
+    window.addEventListener('userDataUpdated', handleUserDataUpdate);
+
+    // Check localStorage on mount
+    const savedProfileImage = localStorage.getItem('profileImage');
+    if (savedProfileImage) {
+      setProfilePhoto(savedProfileImage);
+    }
+
+    return () => {
+      window.removeEventListener('profileImageUpdated', handleProfileUpdate);
+      window.removeEventListener('userDataUpdated', handleUserDataUpdate);
+    };
   }, []);
 
   const toggleDarkMode = () => {
@@ -49,11 +84,25 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   };
 
   const handleLogout = () => {
-    // Implement logout logic here
     localStorage.removeItem("jwt");
     localStorage.removeItem("role");
+    localStorage.removeItem("profileImage");
     navigate("/login");
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isProfileDropdownOpen && !event.target.closest('.profile-dropdown')) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileDropdownOpen]);
 
   return (
     <nav className="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -66,12 +115,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               className="p-2 text-gray-600 rounded cursor-pointer lg:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {isSidebarOpen ? (
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -79,12 +123,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                   ></path>
                 </svg>
               ) : (
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
@@ -93,43 +132,16 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </svg>
               )}
             </button>
+
             <Link to="/" className="flex ml-2 md:mr-24">
               <img src="/images/logo.svg" className="h-8 mr-3" alt="Logo" />
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                 L'Amor Parfumes
               </span>
             </Link>
-            <form action="#" method="GET" className="hidden lg:block lg:pl-3.5">
-              <label htmlFor="topbar-search" className="sr-only">
-                Search
-              </label>
-              <div className="relative mt-1 lg:w-96">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  name="search"
-                  id="topbar-search"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Search"
-                />
-              </div>
-            </form>
           </div>
+
           <div className="flex items-center">
-            {/* Dark mode toggle button */}
             <button
               onClick={toggleDarkMode}
               type="button"
@@ -139,14 +151,12 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 className="w-5 h-5"
                 fill="currentColor"
                 viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
               </svg>
             </button>
 
-            {/* User dropdown */}
-            <div className="flex items-center ml-3 relative">
+            <div className="flex items-center ml-3 relative profile-dropdown">
               <button
                 type="button"
                 onClick={toggleProfileDropdown}
@@ -154,27 +164,30 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               >
                 <span className="sr-only">Open user menu</span>
                 <img
-                  className="w-8 h-8 rounded-full"
-                  src={profilePhoto}
+                  className="w-8 h-8 rounded-full object-cover"
+                  src={profilePhoto || "https://via.placeholder.com/150"}
                   alt="user photo"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
                 />
               </button>
 
-              {/* Dropdown menu */}
               {isProfileDropdownOpen && (
-                <div className="absolute right-0 top-10 z-50 my-4 w-56 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600">
+                <div className="absolute right-0 top-10 z-50 my-4 w-56 text-base list-none bg-white rounded-lg shadow dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600">
                   <div className="px-4 py-3">
                     <p className="text-sm text-gray-900 dark:text-white">
-                      {profile.name}
+                      {profile?.name || 'Loading...'}
                     </p>
                     <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-                      {profile.email}
+                      {profile?.email || 'Loading...'}
                     </p>
                   </div>
                   <ul className="py-1">
                     <li>
                       <Link
-                        to="profile"
+                        to="/profile"
                         onClick={toggleProfileDropdown}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
@@ -183,7 +196,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                     </li>
                     <li>
                       <Link
-                        to="setting"
+                        to="/setting"
                         onClick={toggleProfileDropdown}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                       >
