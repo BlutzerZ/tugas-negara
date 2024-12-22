@@ -1,38 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SalesReturnDetail = () => {
-  const { id } = useParams();
-  const [salesData] = useState({
-    id: 1,
-    name: "John Doe",
-    region: "Jakarta",
-    total_returns: {
-      stock_roll_on: 50,
-      stock_20_ml: 75,
-      stock_30_ml: 100,
-    },
-    return_history: [
-      {
-        id: 1,
-        store_name: "Toko A",
-        date: "2024-01-15",
-        stock_roll_on: 10,
-        stock_20_ml: 15,
-        stock_30_ml: 20,
-        notes: "Parfum tidak laku"
-      },
-      {
-        id: 2,
-        store_name: "Toko B",
-        date: "2024-01-14",
-        stock_roll_on: 8,
-        stock_20_ml: 12,
-        stock_30_ml: 15,
-        notes: "Parfum tidak laku"
-      }
-    ]
+  const { user_id } = useParams();
+  const [totalReturn] = useState({
+    stock_roll_on: 0,
+    stock_20_ml: 0,
+    stock_30_ml: 0,
   });
+  const [recentReturns, setrecentReturns] = useState(null);
+
+  useEffect(() => {
+    const fetchrecentReturn = async () => {
+      try {
+        const response = await fetch(
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.USER.STOCK_RETURN_LOG_LATEST
+          )}/${user_id}?order=asc&include_deleted=false`,
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setrecentReturns(data.data);
+
+        if (totalReturn.stock_roll_on == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_roll_on += sales.stock_roll_on;
+          });
+        }
+
+        if (totalReturn.stock_20_ml == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_20_ml += sales.stock_20_ml;
+          });
+        }
+        if (totalReturn.stock_30_ml == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_30_ml += sales.stock_30_ml;
+          });
+        }
+
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch stores:", error);
+      }
+    };
+
+    fetchrecentReturn();
+  }, []);
 
   return (
     <>
@@ -72,7 +94,7 @@ const SalesReturnDetail = () => {
               </ol>
             </nav>
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              Detail Return - {salesData.name}
+              {/* Detail Return - {recentReturns.name} */}
             </h1>
           </div>
         </div>
@@ -85,7 +107,7 @@ const SalesReturnDetail = () => {
             Total Return Roll On
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesData.total_returns.stock_roll_on}
+            {totalReturn.stock_roll_on}
           </p>
         </div>
 
@@ -94,7 +116,7 @@ const SalesReturnDetail = () => {
             Total Return 20ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesData.total_returns.stock_20_ml}
+            {totalReturn.stock_20_ml}
           </p>
         </div>
 
@@ -103,7 +125,7 @@ const SalesReturnDetail = () => {
             Total Return 30ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {salesData.total_returns.stock_30_ml}
+            {totalReturn.stock_30_ml}
           </p>
         </div>
       </div>
@@ -118,17 +140,32 @@ const SalesReturnDetail = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Tanggal</th>
-                  <th scope="col" className="px-4 py-3">Toko</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
-                  <th scope="col" className="px-4 py-3">Catatan</th>
+                  <th scope="col" className="px-4 py-3">
+                    Tanggal
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Toko
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Catatan
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {salesData.return_history.map((item) => (
-                  <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {recentReturns?.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
@@ -136,7 +173,7 @@ const SalesReturnDetail = () => {
                     <td className="px-4 py-3">{item.stock_roll_on}</td>
                     <td className="px-4 py-3">{item.stock_20_ml}</td>
                     <td className="px-4 py-3">{item.stock_30_ml}</td>
-                    <td className="px-4 py-3">{item.notes}</td>
+                    <td className="px-4 py-3">{item.reason}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,58 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const ReturnManagement = () => {
   const [totalReturn] = useState({
-    stock_roll_on: 250,
-    stock_20_ml: 375,
-    stock_30_ml: 420,
+    stock_roll_on: 0,
+    stock_20_ml: 0,
+    stock_30_ml: 0,
   });
+  const [salesReturns, setsalesReturns] = useState(null);
+  const [recentReturns, setrecentReturns] = useState(null);
 
-  const [salesReturns] = useState([
-    {
-      id: 1,
-      sales_name: "John Doe",
-      region: "Jakarta",
-      total_returns: {
-        stock_roll_on: 50,
-        stock_20_ml: 75,
-        stock_30_ml: 100,
-      }
-    },
-    {
-      id: 2,
-      sales_name: "Jane Smith",
-      region: "Bandung",
-      total_returns: {
-        stock_roll_on: 40,
-        stock_20_ml: 60,
-        stock_30_ml: 80,
-      }
-    }
-  ]);
+  useEffect(() => {
+    const fetchSalesReturn = async () => {
+      try {
+        const response = await fetch(
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.USER.STOCK_RETURN_LOG
+          )}?order=asc&include_deleted=false`,
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
 
-  const [recentReturns] = useState([
-    {
-      id: 1,
-      sales_name: "John Doe",
-      store_name: "Toko A",
-      date: "2024-01-15",
-      stock_roll_on: 10,
-      stock_20_ml: 15,
-      stock_30_ml: 20,
-      notes: "Parfum tidak laku"
-    },
-    {
-      id: 2,
-      sales_name: "Jane Smith",
-      store_name: "Toko B",
-      date: "2024-01-14",
-      stock_roll_on: 8,
-      stock_20_ml: 12,
-      stock_30_ml: 15,
-      notes: "Parfum tidak laku"
-    }
-  ]);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setsalesReturns(data.data);
+
+        if (totalReturn.stock_roll_on == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_roll_on += sales.stock_roll_on;
+          });
+        }
+
+        if (totalReturn.stock_20_ml == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_20_ml += sales.stock_20_ml;
+          });
+        }
+        if (totalReturn.stock_30_ml == 0) {
+          data.data.map((sales) => {
+            totalReturn.stock_30_ml += sales.stock_30_ml;
+          });
+        }
+
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch stores:", error);
+      }
+    };
+
+    const fetchrecentReturn = async () => {
+      try {
+        const response = await fetch(
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.USER.STOCK_RETURN_LOG_LATEST
+          )}?order=asc&include_deleted=false`,
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setrecentReturns(data.data);
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch stores:", error);
+      }
+    };
+
+    fetchSalesReturn();
+    fetchrecentReturn();
+  }, []);
 
   return (
     <>
@@ -107,25 +133,37 @@ const ReturnManagement = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Sales</th>
-                  <th scope="col" className="px-4 py-3">Region</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
+                  <th scope="col" className="px-4 py-3">
+                    Sales
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Region
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {salesReturns.map((sales) => (
-                  <tr key={sales.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td className="px-4 py-3">{sales.sales_name}</td>
+                {salesReturns?.map((sales) => (
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-4 py-3">{sales.user_name}</td>
                     <td className="px-4 py-3">{sales.region}</td>
-                    <td className="px-4 py-3">{sales.total_returns.stock_roll_on}</td>
-                    <td className="px-4 py-3">{sales.total_returns.stock_20_ml}</td>
-                    <td className="px-4 py-3">{sales.total_returns.stock_30_ml}</td>
+                    <td className="px-4 py-3">{sales.stock_roll_on}</td>
+                    <td className="px-4 py-3">{sales.stock_20_ml}</td>
+                    <td className="px-4 py-3">{sales.stock_30_ml}</td>
                     <td className="px-4 py-3">
                       <Link
-                        to={`/returns/sales/${sales.id}`}
+                        to={`/returns/sales/${sales.user_id}`}
                         className="text-primary-600 hover:text-primary-900 dark:text-primary-500 dark:hover:text-primary-400"
                       >
                         Detail
@@ -149,27 +187,44 @@ const ReturnManagement = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Tanggal</th>
-                  <th scope="col" className="px-4 py-3">Sales</th>
-                  <th scope="col" className="px-4 py-3">Toko</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
-                  <th scope="col" className="px-4 py-3">Catatan</th>
+                  <th scope="col" className="px-4 py-3">
+                    Tanggal
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Sales
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Toko
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Catatan
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {recentReturns.map((item) => (
-                  <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {recentReturns?.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3">{item.sales_name}</td>
+                    <td className="px-4 py-3">{item.user_name}</td>
                     <td className="px-4 py-3">{item.store_name}</td>
                     <td className="px-4 py-3">{item.stock_roll_on}</td>
                     <td className="px-4 py-3">{item.stock_20_ml}</td>
                     <td className="px-4 py-3">{item.stock_30_ml}</td>
-                    <td className="px-4 py-3">{item.notes}</td>
+                    <td className="px-4 py-3">{item.reason}</td>
                   </tr>
                 ))}
               </tbody>

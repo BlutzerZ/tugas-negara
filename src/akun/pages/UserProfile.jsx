@@ -66,10 +66,34 @@ const UserProfile = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated user data:", userData);
-    // Handle profile update logic
+
+    const formDataSubmit = new FormData();
+    formDataSubmit.append("image", profileImage);
+    try {
+      const responseUser = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE_PHOTO),
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+          body: formDataSubmit,
+        }
+      );
+
+      if (!responseUser.ok) {
+        const errorData = await responseUser.json();
+        throw new Error(errorData.message || "Failed to get personal user");
+      }
+      const data = await responseUser.json();
+      alert("Success Edit Data");
+      setUserData(data.data);
+    } catch (error) {
+      alert("Failed Edit Data");
+      console.error("Error:", error.message);
+    }
   };
 
   return (
