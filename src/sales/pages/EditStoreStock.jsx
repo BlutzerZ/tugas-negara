@@ -23,7 +23,7 @@ const EditStoreStock = () => {
     stock_roll_on: 0,
     stock_20_ml: 0,
     stock_30_ml: 0,
-    notes: "",
+    return_stock_reason: "",
   });
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const EditStoreStock = () => {
     setIsLoading(true);
 
     const uploadData = new FormData();
-    uploadData.append("stock_action", stockAction);
+    uploadData.append("return_stock_reason", returnForm.return_stock_reason);
 
     Object.keys(formData).forEach((key) => {
       if (stockAction === "add") {
@@ -132,60 +132,6 @@ const EditStoreStock = () => {
       setModalConfig({
         type: "error",
         message: `Error: ${error.message}`,
-        autoClose: false,
-      });
-      setShowModal(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle return submission
-  const handleReturn = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Validasi input
-      if (
-        returnForm.stock_roll_on < 0 ||
-        returnForm.stock_20_ml < 0 ||
-        returnForm.stock_30_ml < 0
-      ) {
-        throw new Error("Jumlah return tidak boleh negatif");
-      }
-
-      if (!returnForm.notes.trim()) {
-        throw new Error("Catatan return wajib diisi");
-      }
-
-      // Di sini nanti akan ada integrasi dengan API
-      // Untuk sementara menggunakan console.log
-      console.log("Return data:", {
-        store_id,
-        ...returnForm,
-      });
-
-      setModalConfig({
-        type: "success",
-        message: "Return berhasil dicatat!",
-        autoClose: true,
-      });
-      setShowModal(true);
-      setShowReturnModal(false);
-
-      // Reset form
-      setReturnForm({
-        stock_roll_on: 0,
-        stock_20_ml: 0,
-        stock_30_ml: 0,
-        notes: "",
-      });
-    } catch (error) {
-      console.error("Error:", error.message);
-      setModalConfig({
-        type: "error",
-        message: error.message,
         autoClose: false,
       });
       setShowModal(true);
@@ -369,9 +315,12 @@ const EditStoreStock = () => {
                     Catatan
                   </label>
                   <textarea
-                    value={returnForm.notes}
+                    value={returnForm.return_stock_reason}
                     onChange={(e) =>
-                      setReturnForm({ ...returnForm, notes: e.target.value })
+                      setReturnForm({
+                        ...returnForm,
+                        return_stock_reason: e.target.value,
+                      })
                     }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     rows="3"

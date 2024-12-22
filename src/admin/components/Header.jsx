@@ -6,14 +6,18 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
+  const [profilePhoto, setprofilePhoto] = useState(null);
 
   useEffect(() => {
     const fetcData = async () => {
       try {
-        const responseUser = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE), {
-          method: "GET",
-          headers: getAuthHeader(),
-        });
+        const responseUser = await fetch(
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
 
         if (!responseUser.ok) {
           const errorData = await responseUser.json();
@@ -21,6 +25,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         }
         const data = await responseUser.json();
         setProfile(data.data);
+        setprofilePhoto(`${API_CONFIG.BASE_URL}/${data.data.image}`);
       } catch (error) {
         console.error("Error:", error.message);
       }
@@ -150,7 +155,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="w-8 h-8 rounded-full"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                  src={profilePhoto}
                   alt="user photo"
                 />
               </button>

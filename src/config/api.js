@@ -11,6 +11,8 @@ export const API_CONFIG = {
       STORES: import.meta.env.VITE_API_USER_STORES,
       STOCK: import.meta.env.VITE_API_USER_STOCK, // New endpoint
       STOCK_DETAIL: import.meta.env.VITE_API_USER_STOCK_DETAIL, // New endpoint
+      STOCK_RETURN: import.meta.env.VITE_API_USER_STOCK_RETURN, // New endpoint
+      STOCK_DETAIL_RETURN: import.meta.env.VITE_API_USER_STOCK_DETAIL_RETURN, // New endpoint
     },
     STORES: {
       LIST: import.meta.env.VITE_API_STORES,
