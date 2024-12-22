@@ -18,37 +18,42 @@ import MyStock from "./sales/pages/MyStock";
 import Return from "./sales/pages/Return";
 import ReturnManagement from "./admin/pages/ReturnManagement";
 import SalesReturnDetail from "./admin/pages/SalesReturnDetail";
+import Sold from "./sales/pages/Sold";
 
 function App() {
-	return (
-		<Router>
-			<Routes>
-				<Route path="/login" element={<Login />} />
-				<Route path="/register" element={<Register />} />
-				<Route path="/" element={<Layout />}>
-					<Route index element={<Dashboard />} />
-					<Route path="stores" element={<StoreList />} />
-					<Route path="stores-stock" element={<StoreListStock />} />
-					<Route path="stores/add" element={<AddStore />} />
-					<Route
-						path="stores/:store_id/edit-stock"
-						element={<EditStoreStock />}
-					/>
-					<Route path="stores/:store_id/edit" element={<EditStore />} />
-					<Route path="sales" element={<SalesList />} />
-					<Route path="sales/:sales_id" element={<SalesStores />} />
-					<Route path="sales-stock" element={<SalesStock />} />
-					<Route path="sales-stock/:id/edit" element={<EditSalesStock />} />
-					<Route path="my-stock" element={<MyStock />} />
-					<Route path="profile" element={<UserProfile />} />
-					<Route path="setting" element={<Setting />} />
-					<Route path="returns" element={<ReturnManagement />} />
-					<Route path="returns/sales/:id" element={<SalesReturnDetail />} />
-					<Route path="return" element={<Return />} />
-				</Route>
-			</Routes>
-		</Router>
-	);
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="stores" element={<StoreList />} />
+          <Route path="stores-stock" element={<StoreListStock />} />
+          <Route path="stores/add" element={<AddStore />} />
+          <Route
+            path="stores/:store_id/edit-stock"
+            element={<EditStoreStock />}
+          />
+          <Route path="stores/:store_id/edit" element={<EditStore />} />
+          <Route path="sales" element={<SalesList />} />
+          <Route path="sales/:sales_id" element={<SalesStores />} />
+          <Route path="sales-stock" element={<SalesStock />} />
+          <Route path="sales-stock/:id/edit" element={<EditSalesStock />} />
+          <Route path="my-stock" element={<MyStock />} />
+          <Route path="sold" element={<Sold />} />
+          <Route path="profile" element={<UserProfile />} />
+          <Route path="setting" element={<Setting />} />
+          <Route path="returns" element={<ReturnManagement />} />
+          <Route
+            path="returns/sales/:user_id"
+            element={<SalesReturnDetail />}
+          />
+          <Route path="return" element={<Return />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

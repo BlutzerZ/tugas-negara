@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { API_CONFIG, createApiUrl, getAuthHeader } from '../../config/api';
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const UserProfile = () => {
   const [userData, setUserData] = useState({});
   const [profileImage, setProfileImage] = useState(null);
-  
+
   const regions = [
     "Jakarta",
     "Banten",
@@ -22,16 +22,19 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE), {
-          method: "GET",
-          headers: getAuthHeader(),
-        });
+        const response = await fetch(
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setUserData(data.data);
-        console.log(data.data);
+        setProfileImage(`${API_CONFIG.BASE_URL}/${data.data.image}`);
       } catch (error) {
         console.error("Failed to fetch stores:", error);
       }
@@ -54,19 +57,43 @@ const UserProfile = () => {
       // Optional: Show preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUserData(prev => ({
+        setUserData((prev) => ({
           ...prev,
-          profileImageUrl: reader.result
+          profileImageUrl: reader.result,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated user data:", userData);
-    // Handle profile update logic
+
+    const formDataSubmit = new FormData();
+    formDataSubmit.append("image", profileImage);
+    try {
+      const responseUser = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.PROFILE_PHOTO),
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+          body: formDataSubmit,
+        }
+      );
+
+      if (!responseUser.ok) {
+        const errorData = await responseUser.json();
+        throw new Error(errorData.message || "Failed to get personal user");
+      }
+      const data = await responseUser.json();
+      alert("Success Edit Data");
+      setUserData(data.data);
+    } catch (error) {
+      alert("Failed Edit Data");
+      console.error("Error:", error.message);
+    }
   };
 
   return (
@@ -82,7 +109,7 @@ const UserProfile = () => {
           <div className="mb-6 text-center">
             <div className="mb-4">
               <img
-                src={userData.profileImageUrl || "https://via.placeholder.com/150"}
+                src={profileImage || "https://via.placeholder.com/150"}
                 alt="Profile"
                 className="w-32 h-32 rounded-full mx-auto mb-2 object-cover"
               />

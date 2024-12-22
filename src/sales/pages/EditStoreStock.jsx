@@ -23,7 +23,7 @@ const EditStoreStock = () => {
     stock_roll_on: 0,
     stock_20_ml: 0,
     stock_30_ml: 0,
-    notes: "",
+    return_stock_reason: "",
   });
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const EditStoreStock = () => {
     setIsLoading(true);
 
     const uploadData = new FormData();
-    uploadData.append("stock_action", stockAction);
+    uploadData.append("return_stock_reason", returnForm.return_stock_reason);
 
     Object.keys(formData).forEach((key) => {
       if (stockAction === "add") {
@@ -132,60 +132,6 @@ const EditStoreStock = () => {
       setModalConfig({
         type: "error",
         message: `Error: ${error.message}`,
-        autoClose: false,
-      });
-      setShowModal(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle return submission
-  const handleReturn = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Validasi input
-      if (
-        returnForm.stock_roll_on < 0 ||
-        returnForm.stock_20_ml < 0 ||
-        returnForm.stock_30_ml < 0
-      ) {
-        throw new Error("Jumlah return tidak boleh negatif");
-      }
-
-      if (!returnForm.notes.trim()) {
-        throw new Error("Catatan return wajib diisi");
-      }
-
-      // Di sini nanti akan ada integrasi dengan API
-      // Untuk sementara menggunakan console.log
-      console.log("Return data:", {
-        store_id,
-        ...returnForm,
-      });
-
-      setModalConfig({
-        type: "success",
-        message: "Return berhasil dicatat!",
-        autoClose: true,
-      });
-      setShowModal(true);
-      setShowReturnModal(false);
-
-      // Reset form
-      setReturnForm({
-        stock_roll_on: 0,
-        stock_20_ml: 0,
-        stock_30_ml: 0,
-        notes: "",
-      });
-    } catch (error) {
-      console.error("Error:", error.message);
-      setModalConfig({
-        type: "error",
-        message: error.message,
         autoClose: false,
       });
       setShowModal(true);
@@ -311,14 +257,13 @@ const EditStoreStock = () => {
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
               {(() => {
                 if (stockAction === "add") {
-                  return "Tambah ";
+                  return "Tambah Stok Toko";
                 } else if (stockAction === "reduce") {
-                  return "Kurangi ";
+                  return "Stok Terjual";
                 } else {
-                  return "Return ";
+                  return "Return Stok Toko";
                 }
               })()}
-              Stok Toko
             </h3>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div>
@@ -369,13 +314,17 @@ const EditStoreStock = () => {
                     Catatan
                   </label>
                   <textarea
-                    value={returnForm.notes}
+                    value={returnForm.return_stock_reason}
                     onChange={(e) =>
-                      setReturnForm({ ...returnForm, notes: e.target.value })
+                      setReturnForm({
+                        ...returnForm,
+                        return_stock_reason: e.target.value,
+                      })
                     }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     rows="3"
                     placeholder="Masukkan alasan return..."
+                    required
                   ></textarea>
                 </div>
               )}
@@ -396,7 +345,7 @@ const EditStoreStock = () => {
                   if (stockAction === "add") {
                     return "Tambah Stok";
                   } else if (stockAction === "reduce") {
-                    return "Kurangi Stock";
+                    return "Stok Terjual";
                   } else {
                     return "Return Stok";
                   }
@@ -412,103 +361,6 @@ const EditStoreStock = () => {
           </div>
         </form>
       </div>
-
-      {/* Return Modal */}
-      {/* {showReturnModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
-            <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">
-              Return Parfum
-            </h3>
-            <form onSubmit={handleReturn}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Roll On
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={returnForm.stock_roll_on}
-                    onChange={(e) =>
-                      setReturnForm({
-                        ...returnForm,
-                        stock_roll_on: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    20ml
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={returnForm.stock_20_ml}
-                    onChange={(e) =>
-                      setReturnForm({
-                        ...returnForm,
-                        stock_20_ml: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    30ml
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={returnForm.stock_30_ml}
-                    onChange={(e) =>
-                      setReturnForm({
-                        ...returnForm,
-                        stock_30_ml: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Catatan
-                  </label>
-                  <textarea
-                    value={returnForm.notes}
-                    onChange={(e) =>
-                      setReturnForm({ ...returnForm, notes: e.target.value })
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    rows="3"
-                    placeholder="Masukkan alasan return..."
-                  ></textarea>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setShowReturnModal(false)}
-                  className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                >
-                  {isLoading ? "Memproses..." : "Konfirmasi Return"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )} */}
 
       {/* Success/Error Modal */}
       <SuccessModal

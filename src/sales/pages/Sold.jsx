@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SuccessModal from "../../admin/components/SuccessModal";
 import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
-const Return = () => {
+const Sold = () => {
   const [stockData, setstockData] = useState(null);
   const [stockDataHistory, setstockDataHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,7 @@ const Return = () => {
   const fetchMyStock = async () => {
     try {
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_RETURN),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_REDUCE),
         {
           method: "GET",
           headers: getAuthHeader(),
@@ -43,7 +43,7 @@ const Return = () => {
   const fetchMyStockHistory = async () => {
     try {
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_DETAIL_RETURN),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_DETAIL_REDUCE),
         {
           method: "GET",
           headers: getAuthHeader(),
@@ -81,7 +81,7 @@ const Return = () => {
         <div className="w-full mb-1">
           <div className="mb-4">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              Return Parfum Saya
+              Stock Terjual
             </h1>
           </div>
         </div>
@@ -176,4 +176,4 @@ const Return = () => {
   );
 };
 
-export default Return;
+export default Sold;

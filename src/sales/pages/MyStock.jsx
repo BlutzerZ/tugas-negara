@@ -173,7 +173,7 @@ const MyStock = () => {
               className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5"
               disabled={isLoading}
             >
-              Update Stok
+              Tambah Stok
             </button>
           </div>
         </div>
@@ -292,10 +292,10 @@ const MyStock = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
             <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">
-              Update Stok
+              Tambah Stok
             </h3>
             <form onSubmit={handleStockSubmit}>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block mb-2 text-gray-700 dark:text-gray-300">
                   Tipe Update
                 </label>
@@ -327,7 +327,7 @@ const MyStock = () => {
                     </span>
                   </label>
                 </div>
-              </div>
+              </div> */}
 
               <div className="space-y-4">
                 <div>
@@ -377,9 +377,9 @@ const MyStock = () => {
                   onClick={() => {
                     setShowStockModal(false);
                     setStockForm({
-                      stock_roll_on: 0,
-                      stock_20_ml: 0,
-                      stock_30_ml: 0,
+                      stock_roll_on: null,
+                      stock_20_ml: null,
+                      stock_30_ml: null,
                     });
                   }}
                   className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
