@@ -196,6 +196,31 @@ const Sidebar = ({ onLinkClick }) => {
 								<span className="ml-3">Sold Management</span>
 							</Link>
 						</li>
+						<li>
+    <Link
+        to="/add-supervisor"
+        onClick={onLinkClick}
+        className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+            location.pathname === "/add-supervisor"
+                ? "bg-gray-100 dark:bg-gray-700"
+                : ""
+        }`}
+    >
+        <svg
+            className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+        >
+            <path
+                fillRule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3zm7-12a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1H8a1 1 0 110-2h1V7a1 1 0 011-1z"
+                clipRule="evenodd"
+            />
+        </svg>
+        <span className="ml-3">Tambah Supervisor</span>
+    </Link>
+</li>
+
 					</ul>
 				</div>
 			</div>

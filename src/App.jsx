@@ -20,6 +20,7 @@ import ReturnManagement from "./admin/pages/ReturnManagement";
 import SalesReturnDetail from "./admin/pages/SalesReturnDetail";
 import Sold from "./sales/pages/Sold";
 import SoldManagement from "./admin/pages/SoldManagement";
+import RegisterSupervisor from "./admin/pages/AddSupervisor";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="setting" element={<Setting />} />
           <Route path="returns" element={<ReturnManagement />} />
           <Route path="sold-management" element={<SoldManagement />} />
+          <Route path="add-supervisor" element={<RegisterSupervisor />} />
 
           <Route
             path="returns/sales/:user_id"
