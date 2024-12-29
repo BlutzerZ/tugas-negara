@@ -7,7 +7,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        console.log("Fetching API...");
         const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.INFO), {
           method: "GET",
           headers: getAuthHeader(),
@@ -16,7 +15,6 @@ const Dashboard = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("API Data:", data);
         setInfo(data.data);
       } catch (error) {
         console.error("Failed to fetch stores:", error);

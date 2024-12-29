@@ -59,8 +59,6 @@ const RegisterSupervisor = () => {
   };
 
   useEffect(() => {
-    
-
     const storedTheme = localStorage.getItem("color-theme");
     const prefersDarkMode = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -180,7 +178,7 @@ const RegisterSupervisor = () => {
 
     try {
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNUP),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST),
         {
           method: "POST",
           headers: {
@@ -202,7 +200,7 @@ const RegisterSupervisor = () => {
 
       setModalConfig({
         type: "success",
-        message: "Registrasi berhasil! Anda akan dialihkan ke halaman login...",
+        message: "Berhasil Menambahkan Akun Supervisor",
         autoClose: true,
       });
       setShowModal(true);

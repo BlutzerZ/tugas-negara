@@ -18,9 +18,11 @@ import MyStock from "./sales/pages/MyStock";
 import Return from "./sales/pages/Return";
 import ReturnManagement from "./admin/pages/ReturnManagement";
 import SalesReturnDetail from "./admin/pages/SalesReturnDetail";
+import SalesSoldDetail from "./admin/pages/SalesSoldDetail";
 import Sold from "./sales/pages/Sold";
 import SoldManagement from "./admin/pages/SoldManagement";
 import RegisterSupervisor from "./admin/pages/AddSupervisor";
+import SupervisorList from "./admin/pages/SupervisorList";
 
 function App() {
   return (
@@ -49,11 +51,13 @@ function App() {
           <Route path="returns" element={<ReturnManagement />} />
           <Route path="sold-management" element={<SoldManagement />} />
           <Route path="add-supervisor" element={<RegisterSupervisor />} />
+          <Route path="supervisor" element={<SupervisorList />} />
 
           <Route
             path="returns/sales/:user_id"
             element={<SalesReturnDetail />}
           />
+          <Route path="sold/sales/:user_id" element={<SalesSoldDetail />} />
           <Route path="return" element={<Return />} />
         </Route>
       </Routes>

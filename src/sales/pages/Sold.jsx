@@ -91,7 +91,7 @@ const Sold = () => {
       <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return Roll On
+            Total Roll On
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_roll_on || 0}
@@ -100,7 +100,7 @@ const Sold = () => {
 
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return 20ml
+            Total 20ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_20_ml || 0}
@@ -109,7 +109,7 @@ const Sold = () => {
 
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return 30ml
+            Total 30ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_30_ml || 0}

@@ -20,6 +20,9 @@ export const API_CONFIG = {
       STOCK_RETURN_LOG: import.meta.env.VITE_API_USER_STOCK_RETURN_LOG,
       STOCK_RETURN_LOG_LATEST: import.meta.env
         .VITE_API_USER_STOCK_RETURN_LOG_LATEST,
+      STOCK_SOLD_LOG: import.meta.env.VITE_API_USER_STOCK_SOLD_LOG,
+      STOCK_SOLD_LOG_LATEST: import.meta.env
+        .VITE_API_USER_STOCK_SOLD_LOG_LATEST,
     },
     STORES: {
       LIST: import.meta.env.VITE_API_STORES,

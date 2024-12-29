@@ -56,7 +56,6 @@ const SalesStores = () => {
         }
         const data = await response.json();
         setStores(data.data);
-        console.log("Stores data:", data);
       } catch (error) {
         console.error("Failed to fetch stores:", error);
       }
@@ -76,7 +75,6 @@ const SalesStores = () => {
         }
         const data = await response.json();
         setSales(data.data);
-        console.log("Sales data:", data);
       } catch (error) {
         console.error("Failed to fetch sales:", error);
       }
@@ -87,7 +85,7 @@ const SalesStores = () => {
   }, [sales_id]);
 
   const openStoreDetail = (store) => {
-    console.log("Opening store detail:", store);
+    // console.log("Opening store detail:", store);
     setSelectedStore(store);
     setShowDetail(true);
   };
@@ -99,7 +97,7 @@ const SalesStores = () => {
       : [-6.2, 106.816666];
     const imageUrl = getImageUrl(store.image);
 
-    console.log("Store image URL:", imageUrl);
+    // console.log("Store image URL:", imageUrl);
 
     return (
       <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
