@@ -91,7 +91,7 @@ const Sold = () => {
       <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return Roll On
+            Total Roll On
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_roll_on || 0}
@@ -100,7 +100,7 @@ const Sold = () => {
 
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return 20ml
+            Total 20ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_20_ml || 0}
@@ -109,7 +109,7 @@ const Sold = () => {
 
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Total Return 30ml
+            Total 30ml
           </h2>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {stockData?.stock_30_ml || 0}
@@ -121,7 +121,7 @@ const Sold = () => {
       <div className="p-4">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            Riwayat Return
+            Riwayat Terjual
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -148,8 +148,11 @@ const Sold = () => {
                 </tr>
               </thead>
               <tbody>
-                {stockDataHistory?.map((item) => (
-                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {stockDataHistory?.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">{item.store_name}</td>
                     <td className="px-4 py-3">{item.date}</td>
                     <td className="px-4 py-3">{item.stock_roll_on}</td>

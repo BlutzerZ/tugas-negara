@@ -27,7 +27,6 @@ const SalesStock = () => {
         }
 
         const data = await response.json();
-        console.log(data.data);
         setSalesStock(data.data);
       } catch (error) {
         console.error("Error fetching stock:", error);
@@ -36,17 +35,7 @@ const SalesStock = () => {
     };
 
     fetchUserStock();
-    console.log("disini");
   }, [searchTerm]);
-
-  console.log("disini2");
-
-  // Filter sales berdasarkan pencarian (nama atau area)
-  // const filteredSales = salesStock.filter(
-  //   (sale) =>
-  //     sale.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     sale.area.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
 
   return (
     <>
@@ -71,8 +60,8 @@ const SalesStock = () => {
           </div>
         </div>
       </div>
-{/* Summary Cards */}
-<div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+      {/* Summary Cards */}
+      <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-4">
         <div className="bg-white rounded-lg shadow-sm p-4 dark:bg-gray-800">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             Total Sales
@@ -156,9 +145,9 @@ const SalesStock = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {salesStock?.users.map((sales) => (
+                  {salesStock?.users.map((sales, index) => (
                     <tr
-                      key={sales.id}
+                      key={index}
                       className="hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       <td className="p-4 text-base font-medium text-gray-900 dark:text-white">
@@ -189,8 +178,6 @@ const SalesStock = () => {
           </div>
         </div>
       </div>
-
-      
     </>
   );
 };

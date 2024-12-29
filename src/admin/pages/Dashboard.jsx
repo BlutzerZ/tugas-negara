@@ -7,7 +7,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        console.log("Fetching API...");
         const response = await fetch(createApiUrl(API_CONFIG.ENDPOINTS.INFO), {
           method: "GET",
           headers: getAuthHeader(),
@@ -16,7 +15,6 @@ const Dashboard = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("API Data:", data);
         setInfo(data.data);
       } catch (error) {
         console.error("Failed to fetch stores:", error);
@@ -30,7 +28,10 @@ const Dashboard = () => {
     return <p className="text-center">Loading</p>;
   }
 
-  if (localStorage.getItem("role") == "ADMIN") {
+  if (
+    localStorage.getItem("role") == "ADMIN" ||
+    localStorage.getItem("role") == "SUPERVISOR"
+  ) {
     return (
       <div className="px-4 pt-6">
         <div className="container mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -1,72 +1,84 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
 const SoldManagement = () => {
   const [totalSold] = useState({
-    stock_roll_on: 150,
-    stock_20_ml: 200,
-    stock_30_ml: 175,
+    stock_roll_on: 0,
+    stock_20_ml: 0,
+    stock_30_ml: 0,
   });
+  const [salesSold, setsalesSold] = useState(null);
+  const [recentSold, setrecentSold] = useState(null);
 
-  const [salesSold] = useState([
-    {
-      user_id: 1,
-      user_name: "John Doe",
-      region: "Jakarta",
-      stock_roll_on: 50,
-      stock_20_ml: 75,
-      stock_30_ml: 60,
-    },
-    {
-      user_id: 2,
-      user_name: "Jane Smith",
-      region: "Bandung",
-      stock_roll_on: 40,
-      stock_20_ml: 55,
-      stock_30_ml: 45,
-    },
-    {
-      user_id: 3,
-      user_name: "Mike Johnson",
-      region: "Bogor",
-      stock_roll_on: 60,
-      stock_20_ml: 70,
-      stock_30_ml: 70,
-    },
-  ]);
+  useEffect(() => {
+    const fetchSalesReturn = async () => {
+      try {
+        const response = await fetch(
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.USER.STOCK_SOLD_LOG
+          )}?order=asc&include_deleted=false`,
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
 
-  const [recentSold] = useState([
-    {
-      id: 1,
-      date: "2024-01-15",
-      user_name: "John Doe",
-      store_name: "Toko A",
-      stock_roll_on: 10,
-      stock_20_ml: 15,
-      stock_30_ml: 12,
-      notes: "Penjualan reguler"
-    },
-    {
-      id: 2,
-      date: "2024-01-14",
-      user_name: "Jane Smith",
-      store_name: "Toko B",
-      stock_roll_on: 8,
-      stock_20_ml: 20,
-      stock_30_ml: 15,
-      notes: "Penjualan event"
-    },
-    {
-      id: 3,
-      date: "2024-01-13",
-      user_name: "Mike Johnson",
-      store_name: "Toko C",
-      stock_roll_on: 12,
-      stock_20_ml: 18,
-      stock_30_ml: 14,
-      notes: "Penjualan reguler"
-    }
-  ]);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setsalesSold(data.data);
+
+        if (totalSold.stock_roll_on == 0) {
+          data.data.map((sales) => {
+            totalSold.stock_roll_on += sales.stock_roll_on;
+          });
+        }
+
+        if (totalSold.stock_20_ml == 0) {
+          data.data.map((sales) => {
+            totalSold.stock_20_ml += sales.stock_20_ml;
+          });
+        }
+        if (totalSold.stock_30_ml == 0) {
+          data.data.map((sales) => {
+            totalSold.stock_30_ml += sales.stock_30_ml;
+          });
+        }
+
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch stores:", error);
+      }
+    };
+
+    const fetchrecentReturn = async () => {
+      try {
+        const response = await fetch(
+          `${createApiUrl(
+            API_CONFIG.ENDPOINTS.USER.STOCK_SOLD_LOG_LATEST
+          )}?order=asc&include_deleted=false`,
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setrecentSold(data.data);
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch stores:", error);
+      }
+    };
+
+    fetchSalesReturn();
+    fetchrecentReturn();
+  }, []);
 
   return (
     <>
@@ -121,17 +133,32 @@ const SoldManagement = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Sales</th>
-                  <th scope="col" className="px-4 py-3">Region</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
-                  <th scope="col" className="px-4 py-3">Actions</th>
+                  <th scope="col" className="px-4 py-3">
+                    Sales
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Region
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {salesSold.map((sales) => (
-                  <tr key={sales.user_id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {salesSold?.map((sales, index) => (
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">{sales.user_name}</td>
                     <td className="px-4 py-3">{sales.region}</td>
                     <td className="px-4 py-3">{sales.stock_roll_on}</td>
@@ -163,18 +190,35 @@ const SoldManagement = () => {
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Tanggal</th>
-                  <th scope="col" className="px-4 py-3">Sales</th>
-                  <th scope="col" className="px-4 py-3">Toko</th>
-                  <th scope="col" className="px-4 py-3">Roll On</th>
-                  <th scope="col" className="px-4 py-3">20ml</th>
-                  <th scope="col" className="px-4 py-3">30ml</th>
-                  <th scope="col" className="px-4 py-3">Catatan</th>
+                  <th scope="col" className="px-4 py-3">
+                    Tanggal
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Sales
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Toko
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Roll On
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    20ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    30ml
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Catatan
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {recentSold.map((item) => (
-                  <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                {recentSold?.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
                     <td className="px-4 py-3">
                       {new Date(item.date).toLocaleDateString()}
                     </td>

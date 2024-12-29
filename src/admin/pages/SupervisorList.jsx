@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
-const SalesList = () => {
+const SupervisorList = () => {
   const navigate = useNavigate();
   const [sales, setSales] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +23,7 @@ const SalesList = () => {
         // const url = new URL();
         url.searchParams.append("order", "asc");
         url.searchParams.append("include_deleted", "false");
-        url.searchParams.append("role_type", "sales");
+        url.searchParams.append("role_type", "supervisor");
         url.searchParams.append("sort_by", "name");
         url.searchParams.append("search_query", searchTerm);
 
@@ -59,7 +59,7 @@ const SalesList = () => {
         <div className="w-full mb-1">
           <div className="mb-4">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              {queryValue ? `Sales - ${queryValue}` : "Semua Sales"}
+              {queryValue ? `Sales - ${queryValue}` : "Semua Supervisor"}
             </h1>
           </div>
           <div className="flex flex-col items-center md:flex-row md:space-x-4">
@@ -88,28 +88,22 @@ const SalesList = () => {
                       scope="col"
                       className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
                     >
-                      Nama Sales
+                      Nama Supervisor
                     </th>
                     <th
                       scope="col"
                       className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
                     >
-                      Jumlah Toko
-                    </th>
-                    <th
-                      scope="col"
-                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
-                      Total Stok
+                      Wilayah
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  {sales.map((salesPerson, index) => {
+                  {sales.map((salesPerson) => {
                     return (
                       <tr
-                        key={index}
-                        onClick={() => navigate(`/sales/${salesPerson.id}`)}
+                        // onClick={() => navigate(`/sales/${salesPerson.id}`)}
+                        key={salesPerson.id}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <td className="p-4">
@@ -118,18 +112,7 @@ const SalesList = () => {
                           </div>
                         </td>
                         <td className="p-4 text-gray-700 dark:text-gray-300">
-                          {salesPerson.total_stores} Toko
-                        </td>
-                        <td className="p-4">
-                          <div className="text-sm">
-                            {salesPerson.products.map((product) => {
-                              return (
-                                <div>
-                                  {product.product_name}: {product.total_stock}
-                                </div>
-                              );
-                            })}
-                          </div>
+                          {salesPerson.region}
                         </td>
                       </tr>
                     );
@@ -144,4 +127,4 @@ const SalesList = () => {
   );
 };
 
-export default SalesList;
+export default SupervisorList;

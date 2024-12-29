@@ -102,6 +102,33 @@ const EditStoreStock = () => {
     });
 
     try {
+      if (stockAction === "add") {
+        const salesStockResponse = await fetch(
+          createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK, {
+            id: localStorage.getItem("user_id"),
+          }),
+          {
+            method: "GET",
+            headers: getAuthHeader(),
+          }
+        );
+
+        if (!salesStockResponse.ok) {
+          throw new Error("Gagal memeriksa stok sales");
+        }
+
+        const salesStock = await salesStockResponse.json();
+
+        // Validate if sales has enough stock
+        if (
+          formData.stock_30ml > salesStock.data.stock_30ml ||
+          formData.stock_roll_on > salesStock.data.stock_roll_on ||
+          formData.stock_20ml > salesStock.data.stock_20ml
+        ) {
+          throw new Error("Stok sales tidak mencukupi");
+        }
+      }
+
       const response = await fetch(
         createApiUrl(API_CONFIG.ENDPOINTS.STORES.DETAIL, { id: store_id }),
         {
@@ -220,7 +247,7 @@ const EditStoreStock = () => {
               onClick={() => setStockAction("add")}
               className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                 stockAction === "add"
-                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  ? "bg-white dark:bg-green-600 text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
@@ -231,7 +258,7 @@ const EditStoreStock = () => {
               onClick={() => setStockAction("reduce")}
               className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                 stockAction === "reduce"
-                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  ? "bg-white dark:bg-yellow-600 text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
@@ -242,7 +269,7 @@ const EditStoreStock = () => {
               onClick={() => setStockAction("return")}
               className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                 stockAction === "return"
-                  ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                  ? "bg-white dark:bg-red-600 text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
