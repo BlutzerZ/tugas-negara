@@ -88,7 +88,7 @@ const SupervisorList = () => {
                       scope="col"
                       className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
                     >
-                      Nama Sales
+                      Nama Supervisor
                     </th>
                     <th
                       scope="col"
@@ -102,7 +102,7 @@ const SupervisorList = () => {
                   {sales.map((salesPerson) => {
                     return (
                       <tr
-                        onClick={() => navigate(`/sales/${salesPerson.id}`)}
+                        // onClick={() => navigate(`/sales/${salesPerson.id}`)}
                         key={salesPerson.id}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700"
                       >

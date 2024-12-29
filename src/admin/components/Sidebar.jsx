@@ -248,6 +248,137 @@ const Sidebar = ({ onLinkClick }) => {
         </div>
       </div>
     );
+  } else if (localStorage.getItem("role") == "SUPERVISOR") {
+    return (
+      <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
+        <div className="flex-1 px-3 space-y-1 bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+          <ul className="pb-2 space-y-2">
+            {/* Dashboard Link */}
+            <li>
+              <Link
+                to="/"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/"
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+                <span className="ml-3">Dashboard</span>
+              </Link>
+            </li>
+
+            {/* Sales Link */}
+            <li>
+              <Link
+                to="/sales"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/sales"
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span className="ml-3">Sales</span>
+              </Link>
+            </li>
+
+            {/* Sales Stock Link */}
+            <li>
+              <Link
+                to="/sales-stock"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/sales-stock"
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span className="ml-3">Stok Sales</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/returns"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/returns"
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="ml-3">Return Management</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/sold-management"
+                onClick={onLinkClick}
+                className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+                  location.pathname === "/sold-management"
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : ""
+                }`}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="ml-3">Sold Management</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    );
   } else {
     return (
       <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">

@@ -228,21 +228,27 @@ const AddStore = () => {
         }
       );
 
-      if (!response.ok) {
+      if (response.ok) {
+        setModalConfig({
+          type: "success",
+          message: "Toko berhasil ditambahkan! Anda akan dialihkan...",
+          autoClose: true,
+        });
+        setShowModal(true);
+
+        setTimeout(() => {
+          navigate("/stores");
+        }, 3000);
+      } else if (response.status == 409) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message ||
+            "Gagal menambahkan toko. Pastikan Stock Mencukupi"
+        );
+      } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Gagal menambahkan toko");
       }
-
-      setModalConfig({
-        type: "success",
-        message: "Toko berhasil ditambahkan! Anda akan dialihkan...",
-        autoClose: true,
-      });
-      setShowModal(true);
-
-      setTimeout(() => {
-        navigate("/stores");
-      }, 3000);
     } catch (error) {
       console.error("Error:", error.message);
       setModalConfig({

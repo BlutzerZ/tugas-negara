@@ -28,7 +28,10 @@ const Dashboard = () => {
     return <p className="text-center">Loading</p>;
   }
 
-  if (localStorage.getItem("role") == "ADMIN") {
+  if (
+    localStorage.getItem("role") == "ADMIN" ||
+    localStorage.getItem("role") == "SUPERVISOR"
+  ) {
     return (
       <div className="px-4 pt-6">
         <div className="container mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
