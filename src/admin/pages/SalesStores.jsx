@@ -41,6 +41,8 @@ const SalesStores = () => {
   const [selectedStore, setSelectedStore] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editedStore, setEditedStore] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -49,55 +51,109 @@ const SalesStores = () => {
     autoClose: true,
   });
 
+  const fetchUserStore = async () => {
+    try {
+      const response = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id }) +
+          "?order=asc&include_deleted=false",
+        {
+          method: "GET",
+          headers: getAuthHeader(),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setStores(data.data);
+    } catch (error) {
+      console.error("Failed to fetch stores:", error);
+    }
+  };
+
+  const fetchSales = async () => {
+    try {
+      const response = await fetch(
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST + `/${sales_id}`),
+        {
+          method: "GET",
+          headers: getAuthHeader(),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setSales(data.data);
+    } catch (error) {
+      console.error("Failed to fetch sales:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserStore = async () => {
-      try {
-        const response = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.USER.STORES, { id: sales_id }) +
-            "?order=asc&include_deleted=false",
-          {
-            method: "GET",
-            headers: getAuthHeader(),
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setStores(data.data);
-      } catch (error) {
-        console.error("Failed to fetch stores:", error);
-      }
-    };
-
-    const fetchSales = async () => {
-      try {
-        const response = await fetch(
-          createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST + `/${sales_id}`),
-          {
-            method: "GET",
-            headers: getAuthHeader(),
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setSales(data.data);
-      } catch (error) {
-        console.error("Failed to fetch sales:", error);
-      }
-    };
-
     fetchUserStore();
     fetchSales();
   }, [sales_id]);
 
-  const handleDeleteSales = async () => {
+  const handleEditStore = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", editedStore.name);
+      formData.append("address", editedStore.address);
+      formData.append("num", editedStore.num);
+      formData.append("loc", editedStore.loc);
+
+      if (editedStore.image instanceof File) {
+        formData.append("image", editedStore.image);
+      }
+
+      editedStore.products.forEach((product) => {
+        formData.append(`products[${product.id}]`, product.stock);
+      });
+
+      const response = await fetch(
+        createApiUrl(`${API_CONFIG.ENDPOINTS.STORES.LIST}/${editedStore.id}`),
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Gagal mengupdate toko");
+      }
+
+      setModalConfig({
+        type: "success",
+        message: "Toko berhasil diupdate",
+        autoClose: true,
+      });
+      setShowModal(true);
+      setShowEditModal(false);
+      setShowDetail(false);
+      fetchUserStore();
+    } catch (error) {
+      setModalConfig({
+        type: "error",
+        message: error.message,
+        autoClose: false,
+      });
+      setShowModal(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteStore = async () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        createApiUrl(`${API_CONFIG.ENDPOINTS.USER.LIST}/${sales_id}`),
+        createApiUrl(`${API_CONFIG.ENDPOINTS.STORES.LIST}/${selectedStore.id}`),
         {
           method: "DELETE",
           headers: getAuthHeader(),
@@ -105,20 +161,18 @@ const SalesStores = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Gagal menghapus sales");
+        throw new Error("Gagal menghapus toko");
       }
 
       setModalConfig({
         type: "success",
-        message: "Sales berhasil dihapus",
+        message: "Toko berhasil dihapus",
         autoClose: true,
       });
       setShowModal(true);
       setShowDeleteModal(false);
-      // Redirect ke halaman sales list setelah berhasil hapus
-      setTimeout(() => {
-        navigate('/sales');
-      }, 2000);
+      setShowDetail(false);
+      fetchUserStore();
     } catch (error) {
       setModalConfig({
         type: "error",
@@ -150,24 +204,58 @@ const SalesStores = () => {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Detail Toko - {store.name}
             </h3>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-500"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => {
+                  setEditedStore({ ...store });
+                  setShowEditModal(true);
+                }}
+                className="text-blue-600 hover:text-blue-700"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="text-red-600 hover:text-red-700"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -231,11 +319,11 @@ const SalesStores = () => {
                 <img
                   src={imageUrl}
                   alt={store.name}
-                  className="store-image"
+                  className="max-w-full h-auto rounded-lg"
                   onError={(e) => {
                     console.error("Error loading image:", e);
                     e.target.parentElement.innerHTML =
-                      '<div class="store-image-error">Gambar tidak tersedia</div>';
+                      '<div class="text-gray-400">Gambar tidak tersedia</div>';
                   }}
                 />
               </div>
@@ -283,36 +371,11 @@ const SalesStores = () => {
                   </li>
                 </ol>
               </nav>
-              <div className="flex justify-between items-center">
-                <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                  Daftar Toko - {sales.name}
-                </h1>
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Hapus
-                </button>
-              </div>
+              <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+                Loading...
+              </h1>
             </div>
           </div>
-        </div>
-        <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <p className="text-center col-span-full text-gray-500 dark:text-gray-400">
-            Loading...
-          </p>
         </div>
       </>
     );
@@ -354,29 +417,9 @@ const SalesStores = () => {
                 </li>
               </ol>
             </nav>
-            <div className="flex justify-between items-center">
-              <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                Daftar Toko - {sales.name}
-              </h1>
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-              >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Hapus Sales
-              </button>
-            </div>
+            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+              Daftar Toko - {sales.name}
+            </h1>
           </div>
         </div>
       </div>
@@ -436,27 +479,146 @@ const SalesStores = () => {
         />
       )}
 
-      {/* Modal Konfirmasi Hapus */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      {showEditModal && editedStore && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg dark:bg-gray-800">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Edit Toko
+              </h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleEditStore} className="space-y-4">
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Nama Toko
+                </label>
+                <input
+                  type="text"
+                  value={editedStore.name}
+                  onChange={(e) =>
+                    setEditedStore({ ...editedStore, name: e.target.value })
+                  }
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Alamat
+                </label>
+                <input
+                  type="text"
+                  value={editedStore.address}
+                  onChange={(e) =>
+                    setEditedStore({ ...editedStore, address: e.target.value })
+                  }
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Nomor Telepon
+                </label>
+                <input
+                  type="text"
+                  value={editedStore.num}
+                  onChange={(e) =>
+                    setEditedStore({ ...editedStore, num: e.target.value })
+                  }
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Stok Produk
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {editedStore.products.map((product) => (
+                    <div key={product.id} className="space-y-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {product.name}
+                      </label>
+                      <input
+                        type="number"
+                        value={product.stock}
+                        onChange={(e) => {
+                          const updatedProducts = editedStore.products.map((p) =>
+                            p.id === product.id
+                              ? { ...p, stock: parseInt(e.target.value) }
+                              : p
+                          );
+                          setEditedStore({
+                            ...editedStore,
+                            products: updatedProducts,
+                          });
+                        }}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                        min="0"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-300 hover:bg-gray-100"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700"
+                >
+                  {isLoading ? "Menyimpan..." : "Simpan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && selectedStore && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Konfirmasi Hapus
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Apakah Anda yakin ingin menghapus sales {sales.name}? Semua data toko yang terkait juga akan dihapus.
+              Apakah Anda yakin ingin menghapus toko {selectedStore.name}?
             </p>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700"
+                className="px-4 py-2 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-300 hover:bg-gray-100"
               >
                 Batal
               </button>
               <button
-                onClick={handleDeleteSales}
+                onClick={handleDeleteStore}
                 disabled={isLoading}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200 dark:focus:ring-red-900"
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
               >
                 {isLoading ? "Menghapus..." : "Hapus"}
               </button>
@@ -465,7 +627,6 @@ const SalesStores = () => {
         </div>
       )}
 
-      {/* Modal Sukses/Error */}
       <SuccessModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
