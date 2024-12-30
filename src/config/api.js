@@ -27,6 +27,7 @@ export const API_CONFIG = {
     STORES: {
       LIST: import.meta.env.VITE_API_STORES,
       DETAIL: import.meta.env.VITE_API_STORE_DETAIL,
+      
     },
     INFO: import.meta.env.VITE_API_INFO,
     USERSTOCK: import.meta.env.VITE_API_SALES_STOCK,

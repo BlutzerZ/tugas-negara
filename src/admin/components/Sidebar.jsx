@@ -244,6 +244,27 @@ const Sidebar = ({ onLinkClick }) => {
                 <span className="ml-3">Sold Management</span>
               </Link>
             </li>
+            <li>
+    <Link
+      to="/store-migration"
+      onClick={onLinkClick}
+      className={`flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 ${
+        location.pathname === "/store-migration"
+          ? "bg-gray-100 dark:bg-gray-700"
+          : ""
+      }`}
+    >
+      <svg
+        className="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+      </svg>
+      <span className="ml-3">Migrasi Toko</span>
+    </Link>
+  </li>
+
           </ul>
         </div>
       </div>

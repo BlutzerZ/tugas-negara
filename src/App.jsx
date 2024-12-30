@@ -23,6 +23,7 @@ import Sold from "./sales/pages/Sold";
 import SoldManagement from "./admin/pages/SoldManagement";
 import RegisterSupervisor from "./admin/pages/AddSupervisor";
 import SupervisorList from "./admin/pages/SupervisorList";
+import StoreMigration from "./admin/pages/StoreMigration";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
           <Route path="sold-management" element={<SoldManagement />} />
           <Route path="add-supervisor" element={<RegisterSupervisor />} />
           <Route path="supervisor" element={<SupervisorList />} />
+          <Route path="store-migration" element={<StoreMigration />} />
 
           <Route
             path="returns/sales/:user_id"
