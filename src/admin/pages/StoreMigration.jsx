@@ -12,6 +12,9 @@ const StoreMigration = () => {
   const [selectedNewSalesData, setSelectedNewSalesData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedStore, setEditedStore] = useState(null);
+  
   const [modalConfig, setModalConfig] = useState({
     type: "success",
     message: "",
@@ -33,32 +36,7 @@ const StoreMigration = () => {
         { name: "30ml", stock: 20 },
       ],
     },
-    {
-      id: 2,
-      name: "Toko Makmur",
-      address: "Jl. Melati No. 45, Bandung",
-      phone: "081234567891",
-      sales_name: "Jane Smith",
-      sales_id: "2",
-      products: [
-        { name: "Roll On", stock: 40 },
-        { name: "20ml", stock: 25 },
-        { name: "30ml", stock: 15 },
-      ],
-    },
-    {
-      id: 3,
-      name: "Toko Bahagia",
-      address: "Jl. Anggrek No. 67, Surabaya",
-      phone: "081234567892",
-      sales_name: "Mike Johnson",
-      sales_id: "3",
-      products: [
-        { name: "Roll On", stock: 35 },
-        { name: "20ml", stock: 20 },
-        { name: "30ml", stock: 25 },
-      ],
-    },
+    // ... data toko lainnya
   ];
 
   // Data statis untuk sales
@@ -69,30 +47,7 @@ const StoreMigration = () => {
       region: "Jakarta",
       total_stores: 15,
     },
-    {
-      id: "2",
-      name: "Jane Smith",
-      region: "Bandung",
-      total_stores: 12,
-    },
-    {
-      id: "3",
-      name: "Mike Johnson",
-      region: "Surabaya",
-      total_stores: 10,
-    },
-    {
-      id: "4",
-      name: "Sarah Wilson",
-      region: "Semarang",
-      total_stores: 8,
-    },
-    {
-      id: "5",
-      name: "David Brown",
-      region: "Yogyakarta",
-      total_stores: 9,
-    },
+    // ... data sales lainnya
   ];
 
   // Filter toko berdasarkan pencarian
@@ -109,10 +64,30 @@ const StoreMigration = () => {
       sales.region.toLowerCase().includes(searchSalesTerm.toLowerCase())
   );
 
+  // Fungsi untuk menangani pembaruan toko
+  const handleUpdateStore = () => {
+    setIsLoading(true);
+
+    // Simulasi proses update
+    setTimeout(() => {
+      setModalConfig({
+        type: "success",
+        message: "Data toko berhasil diperbarui",
+        autoClose: true,
+      });
+      setShowModal(true);
+      setShowStoreModal(false);
+      setSelectedStore(null);
+      setIsEditMode(false);
+      setEditedStore(null);
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  // Fungsi untuk menangani migrasi toko
   const handleStoreMigration = () => {
     setIsLoading(true);
 
-    // Simulasi proses migrasi
     setTimeout(() => {
       setModalConfig({
         type: "success",
@@ -131,7 +106,7 @@ const StoreMigration = () => {
 
   return (
     <>
-      {/* Header Section */}
+      {/* Bagian Header */}
       <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div className="w-full mb-1">
           <div className="mb-4">
@@ -145,7 +120,7 @@ const StoreMigration = () => {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Cari toko..."
               />
             </form>
@@ -153,7 +128,7 @@ const StoreMigration = () => {
         </div>
       </div>
 
-      {/* Stores List */}
+      {/* Daftar Toko */}
       <div className="flex flex-col">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -161,22 +136,13 @@ const StoreMigration = () => {
               <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
-                    <th
-                      scope="col"
-                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
+                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                       Nama Toko
                     </th>
-                    <th
-                      scope="col"
-                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
+                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                       Alamat
                     </th>
-                    <th
-                      scope="col"
-                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
+                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                       Sales Saat Ini
                     </th>
                   </tr>
@@ -211,15 +177,26 @@ const StoreMigration = () => {
         </div>
       </div>
 
-      {/* Store Detail Modal */}
+      {/* Modal Detail & Edit Toko */}
       {showStoreModal && selectedStore && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl dark:bg-gray-800">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                Detail Toko
+                {isEditMode ? "Edit Toko" : "Detail Toko"}
               </h3>
               <div className="flex space-x-2">
+                {!isEditMode && (
+                  <button
+                    onClick={() => {
+                      setIsEditMode(true);
+                      setEditedStore({...selectedStore});
+                    }}
+                    className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
+                  >
+                    Edit
+                  </button>
+                )}
                 <button
                   onClick={() => setShowMigrationModal(true)}
                   className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -230,6 +207,8 @@ const StoreMigration = () => {
                   onClick={() => {
                     setShowStoreModal(false);
                     setSelectedStore(null);
+                    setIsEditMode(false);
+                    setEditedStore(null);
                   }}
                   className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
                 >
@@ -245,9 +224,10 @@ const StoreMigration = () => {
                 </label>
                 <input
                   type="text"
-                  value={selectedStore.name}
+                  value={isEditMode ? editedStore.name : selectedStore.name}
+                  onChange={(e) => isEditMode && setEditedStore({...editedStore, name: e.target.value})}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  disabled
+                  disabled={!isEditMode}
                 />
               </div>
 
@@ -257,9 +237,10 @@ const StoreMigration = () => {
                 </label>
                 <input
                   type="text"
-                  value={selectedStore.address}
+                  value={isEditMode ? editedStore.address : selectedStore.address}
+                  onChange={(e) => isEditMode && setEditedStore({...editedStore, address: e.target.value})}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  disabled
+                  disabled={!isEditMode}
                 />
               </div>
 
@@ -269,9 +250,10 @@ const StoreMigration = () => {
                 </label>
                 <input
                   type="text"
-                  value={selectedStore.phone}
+                  value={isEditMode ? editedStore.phone : selectedStore.phone}
+                  onChange={(e) => isEditMode && setEditedStore({...editedStore, phone: e.target.value})}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  disabled
+                  disabled={!isEditMode}
                 />
               </div>
 
@@ -281,7 +263,7 @@ const StoreMigration = () => {
                 </label>
                 <input
                   type="text"
-                  value={selectedStore.sales_name}
+                  value={isEditMode ? editedStore.sales_name : selectedStore.sales_name}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   disabled
                 />
@@ -292,7 +274,7 @@ const StoreMigration = () => {
                   Stok Produk
                 </label>
                 <div className="grid grid-cols-3 gap-4">
-                  {selectedStore.products.map((product, index) => (
+                  {(isEditMode ? editedStore.products : selectedStore.products).map((product, index) => (
                     <div
                       key={index}
                       className="bg-gray-50 border border-gray-300 rounded-lg p-3 dark:bg-gray-700 dark:border-gray-600"
@@ -300,19 +282,75 @@ const StoreMigration = () => {
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {product.name}
                       </div>
-                      <div className="text-lg text-gray-700 dark:text-gray-300">
-                        {product.stock}
-                      </div>
+                      <input
+                        type="number"
+                        value={product.stock}
+                        onChange={(e) => {
+                          if (isEditMode) {
+                            const newProducts = [...editedStore.products];
+                            newProducts[index] = {
+                              ...newProducts[index],
+                              stock: parseInt(e.target.value) || 0
+                            };
+                            setEditedStore({...editedStore, products: newProducts});
+                          }
+                        }}
+                        className="w-full bg-transparent border-0 text-lg text-gray-700 dark:text-gray-300"
+                        disabled={!isEditMode}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
+
+              {isEditMode && (
+                <div className="flex justify-end space-x-4 mt-6">
+                  <button
+                    onClick={() => {
+                      setIsEditMode(false);
+                      setEditedStore(null);
+                    }}
+                    className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                    disabled={isLoading}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleUpdateStore}
+                    disabled={isLoading}
+                    className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center">
+                        <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Menyimpan...
+                      </div>
+                    ) : (
+                      "Simpan"
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Migration Modal */}
+      {/* Modal Migrasi */}
       {showMigrationModal && selectedStore && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto dark:bg-gray-800">
@@ -350,7 +388,7 @@ const StoreMigration = () => {
             </div>
 
             <div className="mb-4">
-              <label className="sr-only">Search Sales</label>
+              <label className="sr-only">Cari Sales</label>
               <input
                 type="text"
                 value={searchSalesTerm}
@@ -364,15 +402,9 @@ const StoreMigration = () => {
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className="px-4 py-3">
-                      Sales
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Wilayah
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Jumlah Toko
-                    </th>
+                    <th scope="col" className="px-4 py-3">Sales</th>
+                    <th scope="col" className="px-4 py-3">Wilayah</th>
+                    <th scope="col" className="px-4 py-3">Jumlah Toko</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -406,7 +438,7 @@ const StoreMigration = () => {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+      {/* Modal Konfirmasi */}
       {showConfirmationModal && selectedStore && selectedNewSalesData && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
@@ -415,7 +447,7 @@ const StoreMigration = () => {
                 Konfirmasi Pemindahan Toko
               </h3>
             </div>
-            
+
             <div className="mb-6">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Apakah Anda yakin ingin memindahkan:
@@ -477,7 +509,7 @@ const StoreMigration = () => {
         </div>
       )}
 
-      {/* Success/Error Modal */}
+      {/* Modal Sukses/Error */}
       <SuccessModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
