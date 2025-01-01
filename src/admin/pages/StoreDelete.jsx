@@ -2,21 +2,13 @@ import { useEffect, useState } from "react";
 import SuccessModal from "../components/SuccessModal";
 import { API_CONFIG, createApiUrl, getAuthHeader } from "../../config/api";
 
-const StoreMigration = () => {
+const StoreDelete = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchSalesTerm, setSearchSalesTerm] = useState("");
-  const [showStoreModal, setShowStoreModal] = useState(false);
-  const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [selectedStore, setSelectedStore] = useState(null);
-  const [selectedNewSales, setSelectedNewSales] = useState("");
-  const [selectedNewSalesData, setSelectedNewSalesData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editedStore, setEditedStore] = useState(null);
   const [stores, setStores] = useState([]);
-  const [sales, setSales] = useState([]);
 
   const [modalConfig, setModalConfig] = useState({
     type: "success",
@@ -48,49 +40,16 @@ const StoreMigration = () => {
     }
   };
 
-  const fetchSales = async () => {
+  const fetchDeleteStore = async () => {
     try {
-      const url = new URL(createApiUrl(API_CONFIG.ENDPOINTS.USER.LIST));
-      // const url = new URL();
-      url.searchParams.append("order", "asc");
-      url.searchParams.append("include_deleted", "false");
-      url.searchParams.append("role_type", "sales");
-      url.searchParams.append("sort_by", "name");
-      url.searchParams.append("limit", 5);
-      url.searchParams.append("search_query", searchSalesTerm);
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSales(data.data);
-    } catch (error) {
-      setSales([]);
-      console.error("Failed to fetch stores:", error);
-    }
-  };
-
-  const fetchChangeSales = async () => {
-    try {
-      const formDataSubmit = new FormData();
-      formDataSubmit.append("user_id", selectedNewSales);
-
       const url = new URL(
         createApiUrl(API_CONFIG.ENDPOINTS.STORES.LIST) + `/${selectedStore.id}`
       );
       const response = await fetch(url, {
-        method: "PUT",
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
-        body: formDataSubmit,
       });
 
       if (response.ok) {
@@ -103,29 +62,20 @@ const StoreMigration = () => {
     }
   };
 
-  const handleShowUser = () => {
-    setShowMigrationModal(true);
-    fetchSales();
-  };
-
   // Fungsi untuk menangani migrasi toko
-  const handleStoreMigration = () => {
+  const handleStoreDelete = () => {
     setIsLoading(true);
 
-    fetchChangeSales();
+    fetchDeleteStore();
 
     setTimeout(() => {
       setModalConfig({
         type: "success",
-        message: "Toko berhasil dipindahkan",
+        message: "Toko berhasil dihapus",
         autoClose: true,
       });
       setShowModal(true);
-      setShowMigrationModal(false);
       setShowConfirmationModal(false);
-      setSelectedNewSales("");
-      setSearchSalesTerm("");
-      setSelectedNewSalesData(null);
       setIsLoading(false);
     }, 1500);
   };
@@ -134,10 +84,6 @@ const StoreMigration = () => {
     fetchStores();
   }, [searchTerm]);
 
-  useEffect(() => {
-    fetchSales();
-  }, [searchSalesTerm]);
-
   return (
     <>
       {/* Bagian Header */}
@@ -145,7 +91,7 @@ const StoreMigration = () => {
         <div className="w-full mb-1">
           <div className="mb-4">
             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-              Migrasi Toko
+              Delete Toko
             </h1>
           </div>
           <div className="flex flex-col items-center md:flex-row md:space-x-4">
@@ -195,7 +141,7 @@ const StoreMigration = () => {
                     <tr
                       onClick={() => {
                         setSelectedStore(store);
-                        handleShowUser();
+                        setShowConfirmationModal(true);
                       }}
                       key={store.id}
                       className="hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -220,125 +166,24 @@ const StoreMigration = () => {
         </div>
       </div>
 
-      {/* Modal Migrasi */}
-      {showMigrationModal && selectedStore && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto dark:bg-gray-800">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                Pindah Toko: {selectedStore.name}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowMigrationModal(false);
-                  setSearchSalesTerm("");
-                }}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Sales saat ini: {selectedStore.user_name}
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <label className="sr-only">Cari Sales</label>
-              <input
-                type="text"
-                value={searchSalesTerm}
-                onChange={(e) => setSearchSalesTerm(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder="Cari sales berdasarkan nama atau wilayah..."
-              />
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-4 py-3">
-                      Sales
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Wilayah
-                    </th>
-                    <th scope="col" className="px-4 py-3">
-                      Jumlah Toko
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sales.map((sales) => (
-                    <tr
-                      key={sales.id}
-                      onClick={() => {
-                        setSelectedNewSales(sales.id);
-                        setSelectedNewSalesData(sales);
-                        setShowConfirmationModal(true);
-                      }}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                    >
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                        {sales.name}
-                      </td>
-                      <td className="px-4 py-3">{sales.region}</td>
-                      <td className="px-4 py-3">{sales.total_stores}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {sales.length === 0 && (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                Tidak ada sales yang ditemukan
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Modal Konfirmasi */}
-      {showConfirmationModal && selectedStore && selectedNewSalesData && (
+      {showConfirmationModal && selectedStore && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md dark:bg-gray-800">
             <div className="mb-4">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                Konfirmasi Pemindahan Toko
+                Konfirmasi Penghapusan Toko
               </h3>
             </div>
 
             <div className="mb-6">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Apakah Anda yakin ingin memindahkan:
+                Apakah Anda yakin ingin menghapus:
               </p>
               <div className="mt-4 space-y-2">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Toko: <span className="font-bold">{selectedStore.name}</span>
-                </p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Dari Sales:{" "}
-                  <span className="font-bold">{selectedStore.user_name}</span>
-                </p>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  Ke Sales:{" "}
-                  <span className="font-bold">{selectedNewSalesData.name}</span>
+                  Nama Toko:{" "}
+                  <span className="font-bold">{selectedStore.name}</span>
                 </p>
               </div>
             </div>
@@ -347,7 +192,6 @@ const StoreMigration = () => {
               <button
                 onClick={() => {
                   setShowConfirmationModal(false);
-                  setSelectedNewSalesData(null);
                 }}
                 className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
                 disabled={isLoading}
@@ -356,10 +200,10 @@ const StoreMigration = () => {
               </button>
               <button
                 onClick={() => {
-                  handleStoreMigration();
+                  handleStoreDelete();
                 }}
                 disabled={isLoading}
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
               >
                 {isLoading ? (
                   <div className="flex items-center">
@@ -384,7 +228,7 @@ const StoreMigration = () => {
                     Memproses...
                   </div>
                 ) : (
-                  "Ya, Pindahkan"
+                  "Ya, Hapus"
                 )}
               </button>
             </div>
@@ -404,4 +248,4 @@ const StoreMigration = () => {
   );
 };
 
-export default StoreMigration;
+export default StoreDelete;

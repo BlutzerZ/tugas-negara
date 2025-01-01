@@ -24,6 +24,13 @@ import SoldManagement from "./admin/pages/SoldManagement";
 import RegisterSupervisor from "./admin/pages/AddSupervisor";
 import SupervisorList from "./admin/pages/SupervisorList";
 import StoreMigration from "./admin/pages/StoreMigration";
+import StoreDelete from "./admin/pages/StoreDelete";
+import SalesDelete from "./admin/pages/SalesDelete";
+import SupervisorDelete from "./admin/pages/SupervisorDelete";
+import SupervisorEdit from "./admin/pages/SupervisorEdit";
+import SupervisorEditDetails from "./admin/pages/SupervisorEditDetails";
+import SalesEdit from "./admin/pages/SalesEdit";
+import SalesEditDetail from "./admin/pages/SalesEditDetails";
 
 function App() {
   return (
@@ -41,9 +48,14 @@ function App() {
             element={<EditStoreStock />}
           />
           <Route path="stores/:store_id/edit" element={<EditStore />} />
+
           <Route path="sales" element={<SalesList />} />
           <Route path="sales/:sales_id" element={<SalesStores />} />
+          <Route path="sales-delete" element={<SalesDelete />} />
           <Route path="sales-stock" element={<SalesStock />} />
+          <Route path="sales-edit" element={<SalesEdit />} />
+          <Route path="sales-edit/:sales_id" element={<SalesEditDetail />} />
+
           <Route path="sales-stock/:id/edit" element={<EditSalesStock />} />
           <Route path="my-stock" element={<MyStock />} />
           <Route path="sold" element={<Sold />} />
@@ -53,7 +65,15 @@ function App() {
           <Route path="sold-management" element={<SoldManagement />} />
           <Route path="add-supervisor" element={<RegisterSupervisor />} />
           <Route path="supervisor" element={<SupervisorList />} />
+          <Route path="supervisor-edit" element={<SupervisorEdit />} />
+
+          <Route
+            path="supervisor-edit/:supervisor_id"
+            element={<SupervisorEditDetails />}
+          />
+          <Route path="supervisor-delete" element={<SupervisorDelete />} />
           <Route path="store-migration" element={<StoreMigration />} />
+          <Route path="store-delete" element={<StoreDelete />} />
 
           <Route
             path="returns/sales/:user_id"

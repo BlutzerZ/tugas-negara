@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { API_CONFIG, createApiUrl } from "../../config/api";
-import SuccessModal from "../../admin/components/SuccessModal";
+import SuccessModal from "../components/SuccessModal";
 
 const SupervisorList = () => {
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ const SupervisorList = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSelectedSupervisor(prev => ({
+    setSelectedSupervisor((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -92,19 +92,19 @@ const SupervisorList = () => {
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
         setModalConfig({
-          type: 'error',
-          message: 'File terlalu besar. Maksimum ukuran file adalah 2MB',
-          autoClose: false
+          type: "error",
+          message: "File terlalu besar. Maksimum ukuran file adalah 2MB",
+          autoClose: false,
         });
         setShowModal(true);
         return;
       }
 
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         setModalConfig({
-          type: 'error',
-          message: 'Hanya file gambar yang diperbolehkan',
-          autoClose: false
+          type: "error",
+          message: "Hanya file gambar yang diperbolehkan",
+          autoClose: false,
         });
         setShowModal(true);
         return;
@@ -112,10 +112,10 @@ const SupervisorList = () => {
 
       const previewUrl = URL.createObjectURL(file);
       setProfileImage(previewUrl);
-      
-      setSelectedSupervisor(prev => ({
+
+      setSelectedSupervisor((prev) => ({
         ...prev,
-        image: file
+        image: file,
       }));
     }
   };
@@ -130,13 +130,15 @@ const SupervisorList = () => {
       formData.append("name", selectedSupervisor.name);
       formData.append("phone", selectedSupervisor.phone);
       formData.append("region", selectedSupervisor.region);
-      
+
       if (selectedSupervisor.image instanceof File) {
         formData.append("image", selectedSupervisor.image);
       }
 
       const response = await fetch(
-        createApiUrl(`${API_CONFIG.ENDPOINTS.USER.LIST}/${selectedSupervisor.id}`),
+        createApiUrl(
+          `${API_CONFIG.ENDPOINTS.USER.LIST}/${selectedSupervisor.id}`
+        ),
         {
           method: "PUT",
           headers: {
@@ -174,7 +176,9 @@ const SupervisorList = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        createApiUrl(`${API_CONFIG.ENDPOINTS.USER.LIST}/${selectedSupervisor.id}`),
+        createApiUrl(
+          `${API_CONFIG.ENDPOINTS.USER.LIST}/${selectedSupervisor.id}`
+        ),
         {
           method: "DELETE",
           headers: {
@@ -240,10 +244,16 @@ const SupervisorList = () => {
               <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Nama Supervisor
                     </th>
-                    <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Wilayah
                     </th>
                   </tr>
@@ -254,7 +264,9 @@ const SupervisorList = () => {
                       key={supervisor.id}
                       onClick={() => {
                         setSelectedSupervisor(supervisor);
-                        setProfileImage(`${API_CONFIG.BASE_URL}/${supervisor.image}`);
+                        setProfileImage(
+                          `${API_CONFIG.BASE_URL}/${supervisor.image}`
+                        );
                         setShowEditModal(true);
                       }}
                       className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
@@ -309,7 +321,11 @@ const SupervisorList = () => {
                   }}
                   className="text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -442,7 +458,8 @@ const SupervisorList = () => {
               Konfirmasi Hapus
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Apakah Anda yakin ingin menghapus supervisor {selectedSupervisor.name}?
+              Apakah Anda yakin ingin menghapus supervisor{" "}
+              {selectedSupervisor.name}?
             </p>
             <div className="flex justify-end space-x-2">
               <button
