@@ -17,6 +17,7 @@ const Sidebar = ({ onLinkClick }) => {
     "Sukabumi",
     "Lampung",
     "Palembang",
+    "Semarang",
   ];
 
   if (localStorage.getItem("role") == "ADMIN") {

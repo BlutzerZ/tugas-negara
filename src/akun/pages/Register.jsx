@@ -26,6 +26,7 @@ const Register = () => {
     "Sukabumi",
     "Lampung",
     "Palembang",
+    "Semarang",
   ];
 
   const [formData, setFormData] = useState({
