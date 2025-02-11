@@ -16,7 +16,8 @@ const Return = () => {
   const fetchMyStock = async () => {
     try {
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_RETURN),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_RETURN) +
+          `?include_deleted=false`,
         {
           method: "GET",
           headers: getAuthHeader(),
@@ -43,7 +44,8 @@ const Return = () => {
   const fetchMyStockHistory = async () => {
     try {
       const response = await fetch(
-        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_DETAIL_RETURN),
+        createApiUrl(API_CONFIG.ENDPOINTS.USER.STOCK_DETAIL_RETURN) +
+          `?include_deleted=false`,
         {
           method: "GET",
           headers: getAuthHeader(),

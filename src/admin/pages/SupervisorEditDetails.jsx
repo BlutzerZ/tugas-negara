@@ -14,6 +14,20 @@ const SupervisorEditDetail = () => {
     autoClose: true,
   });
 
+  const regions = [
+    "Jakarta",
+    "Banten",
+    "Bandung",
+    "Bogor",
+    "Cianjur",
+    "Garut",
+    "Karawang",
+    "Subang",
+    "Sukabumi",
+    "Lampung",
+    "Palembang",
+  ];
+
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -76,6 +90,7 @@ const SupervisorEditDetail = () => {
           body: JSON.stringify({
             new_name: userData.name,
             new_phone: userData.phone,
+            new_region: userData.region,
             old_password: userData.currentPassword,
             new_password:
               userData.newPassword === userData.confirmPassword
@@ -174,6 +189,26 @@ const SupervisorEditDetail = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Wilayah
+                </label>
+                <select
+                  name="region"
+                  value={userData.region}
+                  onChange={handleChange}
+                  className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
+                  required
+                  disabled={isLoading}
+                >
+                  <option value="">--- Pilih Wilayah ---</option>
+                  {regions.map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
